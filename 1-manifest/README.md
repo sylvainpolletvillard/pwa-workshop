@@ -87,20 +87,18 @@ La dernière étape consiste à rensigner le manifeste dans le fichier html. Cec
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 ```
 
-On peut tester en ouvrant l'application depuis un mobile. Une fois l'app ouverte, ouvrir le menu et choisir l'option:  **Add to home screen**
+On peut tester en ouvrant l'application depuis un mobile. Une fois l'app ouverte, ouvrir le menu et choisir l'option: **Add to home screen**
 
 ![Add to home screen](./readme_assets/pwa_install_menu.jpg 'dd to home screen')
 
-Poursuivre l'installation.
+Poursuivre l'installation. Un nouveau raccourci devrait apparaitre dans l'écran d'accueil du smartphone. C'est n'est autre que le raccourci de notre PWA !
 
 ![PWA bookmark](./readme_assets/pwa_bookmark.jpg 'PWA bookmark')
 
-Une fois la PWA installé, on peut remarquer que le raccourci a été ajouté. Quand on clique sur le raccourci, un splash screen est affiché brièvmeent. Celui-ci reprend les couleurs et l'icone spécifiée dans le manifeste.
+Une fois la PWA installé, on peut remarquer que le raccourci a été ajouté. Quand on clique sur le raccourci, un splash screen est affiché brièvement Celui-ci reprend les couleurs et l'icône spécifiée dans le manifeste.
 
 ![Splash-screen](./readme_assets/pwa_splashscreen.jpg 'Splash-screen')
 
-Right after that, the fullscreen PWA is shown with all its glory thanks to the `"display": "fullscreen"` option in the manifest.
+Lancer et manipuler la PWA. On remarque que la barre d'adresse n'est pas présente.
 
 ![PWA run from bookmark](./readme_assets/pwa_chrome_fullscreen.jpg 'PWA run from bookmark')
-
-La PWA est maintenant accessible depuis l'écran d'accueil.
