@@ -11,7 +11,7 @@ Pour les besoins du mode offline, il nous faut également mettre ces données da
 
 Deux stratégies de cache sont généralement utilisées dans le cas des données dynamiques :
 
-## *Cache as Fallback*
+## Cache as Fallback
 
 Avec cette stratégie, on interroge systématiquement le réseau à chaque requête. Si la requête aboutit, on met la réponse dans un cache local. Si la requête échoue, on regarde si une réponse a été précédemment sauvegardée dans le cache, auquel cas c'est la version en cache qui est retournée à l'application.
 
@@ -23,7 +23,7 @@ Inconvénients:
 - Temps de chargement potentiellement très long en cas de timeout de requête
 - L'obsolescence des données n'est pas forcément explicite pour l'utilisateur
 
-## *Cache, Update, Refresh*
+## Cache, Update, Refresh
 
 Cette stratégie est légèrement plus complexe que la précédente mais permet d'utiliser le cache local pour accélerer considérablement le temps de premier chargement, quitte à afficher temporairement des données non à jour.
 
@@ -45,7 +45,7 @@ Nous allons pour notre application implémenter cette stratégie de *Cache, Upda
 
 ### Choix de la stratégie selon la requête
 
-Repartons du code du service worker, dans le callback d'événement `fetch`. Nous allons distinguer les requêtes vers notre API des requêtes statiques, afin d'appliquer une stratégie différente pour les données:
+Repartons du code du Service Worker, dans le callback d'événement `fetch`. Nous allons distinguer les requêtes vers notre API des requêtes statiques, afin d'appliquer une stratégie différente pour les données:
 
 ```js
 self.addEventListener('fetch', function(event) {
@@ -101,10 +101,28 @@ function refresh(response){
 }
 ```
 
-La communication entre Service Worker et client se fait par le biais de la méthode `client.postMessage` côté Service Worker et du callback `navigator.serviceWorker.onMessage` côté applicatif. Le format d'échange est textuel, vous devrez donc sérialiser vos données en JSON avec `client.postMessage(JSON.stringify(message))`.
+Le Service Worker communique avec le client par le biais de la méthode `client.postMessage`. Le format d'échange est textuel, vous devrez donc sérialiser vos données en JSON avec `client.postMessage(JSON.stringify(message))`.
 
-Le message devra être un objet constitué a minima de l'URL de la requête et du contenu de la réponse. Il sera désérialisé côté client dans `scripts.js` avec `JSON.parse(event.data)`.
+Le message devra être un objet constitué a minima d'une propriété pour identifier le type de message (l'URL de la requête correspondante par exemple) et d'une autre propriété contenant les données à transmettre (le contenu de la réponse).
 
 ## Rafraîchissement côté applicatif
 
+Le client peut écouter les messages émis par le Service Worker via le callback `navigator.serviceWorker.onMessage = function(event){ }`. Vous pouvez ensuite désérialiser le message avec `JSON.parse(event.data)`.
 
+Dans `scripts.js`, la fonction `renderAttendees` permet d'actualiser la liste des participants.
+
+Complétez le code d'installation du Service Worker de l'étape 2 pour réagir à la réception d'un message du Service Worker. Si le message correspond à une mise à jour des participants, rappelez la fonction `renderAttendees` avec les données reçues dans le message.
+
+## Test de bon fonctionnement
+
+Pour tester le bon fonctionnement de la stratégie de chargement, nous allons simuler l'ajout de nouveaux participants. Le nombre de participants est déterminé par la variable `nbAttendees` dans `scripts.js`. Cette variable est transmise en paramètre à l'API de mockup.
+
+Retirez le fichier `scripts.js` du precaching et assurez-vous que le Service Worker est bien actualisé et réinstallé (dans les Developer Tools, onglet Application > Service Workers, cochez la case *Update on reload*, voir étape 2). Puis allez sur l'onglet *Network* ajoutez une fausse latence réseau:
+
+![Ajout d'une fausse latence réseau 1/2](./readme_assets/chrome_throttling.png)
+
+![Ajout d'une fausse latence réseau 2/2](./readme_assets/chrome_throttling_2.png) 
+
+Enfin, changez la variable `nbAttendees` dans `scripts.js` et actualisez la page. Une latence de 3 secondes vous laissera le temps de voir le premier affichage (version cache) puis le rafraichissement à la réception des nouvelles données.
+
+ 

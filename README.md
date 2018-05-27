@@ -17,7 +17,13 @@ Nous allons ensemble transformer une application web classique en une PWA. Cela 
 - Un poste de travail muni d'un **éditeur de code** tel que [Visual Studio Code](https://code.visualstudio.com/)
 - **Google Chrome** (*les PWA sont supportées par la plupart des navigateurs mais pour faciliter l'organisation, nous utiliserons tous le même navigateur pendant le développement*)
 - Un **serveur web local** (si vous n'en avez pas, essayez [npmjs.com/serve](http://npmjs.com/serve) ou encore [l'extension Live Server de Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer))
-- Clôner ou télécharger la web app d'exemple
+
+# Préparation
+- [Clôner ou télécharger la web app d'exemple](https://github.com/sylvainpolletvillard/pwa-workshop.git) qui se trouve dans le dossier [app](https://github.com/sylvainpolletvillard/pwa-workshop/tree/master/app) de ce repo.
+- Ouvrir le dossier `app` dans votre éditeur de code.
+- Configurer votre serveur local pour servir le dossier `app`.
+- Charger la page `app/index.html` sur Google Chrome. Une liste de participants devrait s'afficher.
+
 
 # Etapes du workshop
 

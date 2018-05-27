@@ -1,6 +1,8 @@
 const API_ROOT = "https://reqres.in/api/";
 const api = name => API_ROOT + name;
-let nbAttendees = 10, nbMaxAttendees = 30;
+
+let nbAttendees = 10,
+    nbMaxAttendees = 30;
 
 function fetchAttendees(){
 	return fetch(api(`users?per_page=${nbAttendees}`))
@@ -8,13 +10,12 @@ function fetchAttendees(){
 		.then(res => res.data || [])
 }
 
-function refreshAttendees(){
+function renderAttendees(attendees){
 	const section = document.getElementById("attendees");
-	section.innerHTML = `<h1>Attendees</h1><p>Loading the attendees list...</p>`
-	return fetchAttendees().then(users => {
-		section.innerHTML = `
-		<h1>Attendees: ${nbAttendees} / ${nbMaxAttendees}</h1>
-		${users.map(user =>  `
+	section.innerHTML = `
+	<h1>Attendees: ${nbAttendees} / ${nbMaxAttendees}</h1>
+	<ul>
+		${attendees.map(user => `
 		<li class='card'>
 			<img src="${user.avatar}" alt="Avatar" class="avatar">
 			<p>
@@ -23,9 +24,10 @@ function refreshAttendees(){
 				<span class="lastname">${user.last_name}</span>
 			</p>
 		</li>
-		`).join('')}`
-		updateRegisterForm();
-	})
+		`).join('')}
+	</ul>
+	`
+	updateRegisterForm();
 }
 
 function updateRegisterForm(){
@@ -38,5 +40,9 @@ function updateRegisterForm(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	refreshAttendees();
+	fetchAttendees().then(attendees => renderAttendees(attendees));
+
+	//TODO: Etape 2 - Installation du Service Worker au chargement du document
+
+	//TODO: Etape 4 - Réception de messages depuis le Service Worker
 });
