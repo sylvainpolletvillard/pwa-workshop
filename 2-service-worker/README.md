@@ -37,7 +37,7 @@ addEventListener('DOMContentLoaded', function(event) {
 
 Avant de rafraichir la page, créez un fichier _sw.js_ vide (pour l'instant). Rechargez la page, le log suivant devrait apparaitre une fois la page chargée.
 
-```sh
+```
 Service worker registered [object ServiceWorkerRegistration]
 ```
 
@@ -67,7 +67,7 @@ self.addEventListener('activate', function(event) {
 
 Rechargez la page et vérifier les logs. Tiens, on ne voit que le log d'installation.
 
-```sh
+```
 Service worker registered [object ServiceWorkerRegistration]
 Service Worker installing.
 ```
@@ -80,7 +80,7 @@ Quand on rafraîchit la page, le navigateur essaye d'installer puis d'activer un
 
 Cliquez sur le bouton **skipWaiting**. Et là, on remarque que l'ancien service worker a disparu et que celui qui était en attente prend sa place. Le log d'activation s'affiche également.
 
-```sh
+```
 Service Worker activating.
 ```
 
