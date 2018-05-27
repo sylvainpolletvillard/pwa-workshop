@@ -37,7 +37,9 @@ addEventListener('DOMContentLoaded', function(event) {
 
 Avant de rafraichir la page, créez un fichier _sw.js_ vide (pour l'instant). Rechargez la page, le log suivant devrait apparaitre une fois la page chargée.
 
-> Service worker registered [object ServiceWorkerRegistration]
+```sh
+Service worker registered [object ServiceWorkerRegistration]
+```
 
 Cela signifie que le service worker a bien été enregistré. On peut vérifier cela grâce à l'onglet **Application** des ChromeDev tools.
 
@@ -63,14 +65,27 @@ self.addEventListener('activate', function(event) {
 });
 ```
 
-Recharger la page et vérifier les logs.
+Rechargez la page et vérifier les logs. Tiens, on ne voit que le log d'installation.
 
-![Chrome apps tab](./readme_assets/chrome_apps_tab.png 'Chrome apps tab')
+```sh
+Service worker registered [object ServiceWorkerRegistration]
+Service Worker installing.
+```
 
-Lorsqu'on développe un service worker, il est pratique d'activer la case **Update on reload**.
+Vérifions, l'écran service worker des devtools. Un affichage similaire à la capture suivante devrait apparaitre:
 
-When developing a service worker, it is recommended to check the **Update on reload** checkbox. It makes chrome reinstall the Service Worker after each registration. Otherwise, when you register a new service worker, w will have to manually unregister the previous one before. So, please go ahead and check it.
+![Service worker en attente d'installation](./readme_assets/sw-waiting.png 'Service worker en attente')
 
-Next, create a javascript file at the root folder called **sw.js** (or whatever name you specified to the register method). As explained above, the service worker is a set of event handlers that allow us to mainly provide caching behavior. With respect to that, we are going to implement two event handlers: **install** and **fetch**.
+Quand on rafraîchit la page, le navigateur essaye d'installer puis d'activer un nouveau service worker. Comme ce dernier est différent du service worker actif, son activation est suspendue. Dans ce cas, Il entre en attente et ne sera installé que si le précédent service worker ne contrôle aucun client. On a deux solutions dans ce cas: soit fermer tous les onglets controlés par le premier service worker ou bien cliquer sur le bouton **skipWaiting**.
 
-The first event is `install`. It is called once after a successful service worker **registration**. It is the best place to cache the app shell and all static content. We are going to use Cache API of the service worker to add those files as follows. Add the following code to sw.js.
+Cliquez sur le bouton **skipWaiting**. Et là, on remarque que l'ancien service worker a disparu et que celui qui était en attente prend sa place. Le log d'activation s'affiche également.
+
+```sh
+Service Worker activating.
+```
+
+Quand on rafraîchit la page sans modifier le service worker. On remarque qu'on ne passe plus par les étapes d'installation et d'activation.
+
+On peut comprendre qu'il est nécessaire de gérer en production la montée en version des services workers. En développement, on peut s'en passer en cochant la case **Update on reload**. Cette dernière permet d'activer immédiatement les futurs nouveaux service workers. C'est un équivalent d'un clic automatique sur **skipWaiting** à chaque fois.
+
+Dans cette partie, on a installé un service worker. On a également gérer deux évènements qui sont **install** et **activate**.
