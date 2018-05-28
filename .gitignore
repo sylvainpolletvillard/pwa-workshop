@@ -59,3 +59,6 @@ typings/
 
 # Jetbrains IDE
 .idea
+
+#vscode
+.vscode/

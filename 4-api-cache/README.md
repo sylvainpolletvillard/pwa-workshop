@@ -125,6 +125,6 @@ Retirez le fichier `scripts.js` du precaching et assurez-vous que le Service Wor
 
 ![Ajout d'une fausse latence réseau 1/2](./readme_assets/chrome_throttling.png)
 
-![Ajout d'une fausse latence réseau 2/2](./readme_assets/chrome_throttling_2.png) 
+![Ajout d'une fausse latence réseau 2/2](./readme_assets/chrome_throttling_2.png)
 
 Enfin, changez la variable `nbAttendees` dans `scripts.js` et actualisez la page. Une latence de 3 secondes vous laissera le temps de voir le premier affichage (version cache) puis le rafraichissement à la réception des nouvelles données.

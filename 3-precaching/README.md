@@ -62,3 +62,11 @@ if (!event.request.url.startsWith('http')) {
   return;
 }
 ```
+
+## Mise à jour du cache statique
+
+La mise en cache des fichiers statiques pose un problème; que se passe-t-il si j'ajoute, supprime, ou modifie des fichiers ?
+
+La réponse est que dans l'état actuel, les fichiers qui était déjà en cache auront le dessus. Donc, la page chargera les fichiers en cache en priorité et récupérera du serveur ceux qui n'y figurent pas.
+
+Pour gérer ce problème, une solution est de passer vers un nouveau cache. En effet, tout à l'heure, on nommé notre cache **V1**
