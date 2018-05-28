@@ -7,11 +7,15 @@ lang: fr
 
 On a vu dans l'étape précédent deux méthodes du cycle de vie d'un Service Worker: `install` et `activate`. Dans cette partie, on va poursuivre notre exploration des PWA en mettant en cache les fichiers statiques.
 
+## Exploration des API de mise en cache
+
 Parmi les [API dont dispose le Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), celle qui nous intéresse est [l'API Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache). En effet, elle permet de mettre dans un cache persistant des réponses aux requêtes. Il est possible de spécifier l'URL à mettre en cache, ou bien de donner une réponse personnalisée avec les différentes fonctions `add`, `addAll` et `put`. On peut également supprimer des entrées du cache si on le souhaite. Les réponses sont identifiées dans le cache par une clé de type *string*.
 
 Les différents caches sont gérés par la propriété `caches` du Service Worker. C'est l'API [CacheStorage](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) qui permet, entre-autres, de créer/obtenir un objet cache ou d'en supprimer un avec les fonctions `open` et `delete`. Les différents caches sont identifiés par des clés de type *string* dans le `CacheStorage`.
 
 Une autre fonction intéressante est `match` qui vérifie dans les tous les objets `Cache` gérés par le `CacheStorage` si une requête correspond à cette passées en paramètre. Si c'est le cas, elle retourne un promesse qui permet d'accéder à la réponse en cache.
+
+## Ajout des fichiers statiques dans le cache
 
 Pour résumer, voici les différentes étapes pour mettre des fichiers statiques en cache:
 
@@ -34,6 +38,8 @@ self.addEventListener('install', function(event) {
 On peut vérifier que les fichiers sont ajoutés dans le cache en consultant l'écran **Cache Storage** de l'onglet **Applications** des dev tools.
 
 ![Cache storage](./readme_assets/cache_storage.png 'Service Worker en attente')
+
+## Récupération des fichiers du cache en priorité
 
 Maintenant que les fichiers sont en cache, il nous reste à les charger localement lorsque le navigateur les demande. Pour ce faire, nous allons passer par l'évènement `fetch`. Ce dernier intercepte tous les appels émis par les clients gérés per le Service Worker. On peut retourner une réponse personnalisés en appelant `event.respondWith` où `event` est le paramètre du gestionnaire d'évènement `fetch`. La fonction `event.respondWith` renvoie une promesse qui résout vers un object réponse. Justement, la fonction `caches.match` renvoie une promesse qui résout vers un object réponse. Donc, en combinant les deux appels, on peut retourner les fichiers statiques en cache au lieu d'aller les chercher sur internet.
 
@@ -69,4 +75,4 @@ La mise en cache des fichiers statiques pose un problème; que se passe-t-il si 
 
 La réponse est que dans l'état actuel, les fichiers qui était déjà en cache auront le dessus. Donc, la page chargera les fichiers en cache en priorité et récupérera du serveur ceux qui n'y figurent pas.
 
-Pour gérer ce problème, une solution est de passer vers un nouveau cache. En effet, tout à l'heure, on nommé notre cache **V1**
+Pour gérer ce problème, une solution est de passer vers un nouveau cache. En effet, tout à l'heure, on a nommé notre cache **V1**. L'idée ici serait de créer un nouveau cache en **V2** qui contient les nouveaux fichiers et de supprimer l'ancien cache. La création du nouveau cache se fera dans la méthode **install** et la suppression de l'ancien cache se fera dans la méthode **activate**. [réponse](https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle).

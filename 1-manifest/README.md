@@ -17,6 +17,8 @@ La présence d'un manifeste procure également d'autres avantages. En voici quel
 * Il permet à la PWA d'être référencée par certains moteurs de recherche et reconnue par le store [Windows](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps).
 * Il permet d'afficher un écran initial (splashscreen) lors de l'ouverture de la PWA
 
+## Propriétés du manifeste
+
 Le fichier JSON constitiaunt le manifest contient plusieurs champs. Il est recommandé de renseigner un maximum de champs afin de permettre à la PWA d'être reconnue pas les navigateurs et les stores. Voici la liste des attributs du manifeste [source](https://medium.com/@subodhgarg/web-app-manifest-file-make-your-web-app-installable-b5fcdb2919b9), [source](https://developer.mozilla.org/fr/docs/Web/Manifest):
 
 * name — affiché sur le splashscreen
@@ -38,6 +40,8 @@ Le fichier JSON constitiaunt le manifest contient plusieurs champs. Il est recom
 * lang — la langue principale de l'application. la valeur par défaut est ‘en-US’.
 * related_applications — Lien vers l'application Android native. A ignorer s'il n'y a pas d'application native.
 * icons — tableau listant les différentes résolutions de l'icone de l'application utilisée notamment pour le raccourci et le splashscreen. Les tailles recommandées sont : 48, 96, 144, 192, 256, 384, 512. L'appareil choisira la meilleure icone automatiquement.
+
+## Utilisation d'un générateur de manifeste
 
 Comme le manifeste d'application web est un fichier texte, il est possible de l'écrire à la main à l'aide d'un VIM ou d'un bloc notes. On peut également utiliser un outil qui simplifie sa création. Plusieurs outils sont disponibles sur internet:
 
@@ -71,11 +75,13 @@ En utilisant l'outil, générons un fichier manifeste exhaustif.
 }
 ```
 
-On peut ensuite enregistrer le manifest dans un fichier texte appelé `manifest.json`. Ensuite, déplaçons ec fichier ainsi que les icones à la racine du site.
+On peut ensuite enregistrer le manifeste dans un fichier texte appelé `manifest.json`. Ensuite, déplaçons ce fichier ainsi que les icônes à la racine du site.
 
-Voici un lien mettant à disposition des icones gratuitement [FLATICON](https://www.flaticon.com/).
+Voici un lien mettant à disposition des icônes gratuitement [FLATICON](https://www.flaticon.com/).
 
-La dernière étape consiste à rensigner le manifeste dans le fichier html. Ceci est possible grâce à cette balise `link` à mettre dans le `head` : `<link rel="manifest" href="manifest.json">`.
+## Ajout du manifeste dans l'application
+
+La dernière étape consiste à référencer le manifeste dans le fichier html. Ceci est possible grâce à cette balise `link` à mettre dans le `head` : `<link rel="manifest" href="manifest.json">`.
 
 ```html
 <link rel="manifest" href="manifest.json">
