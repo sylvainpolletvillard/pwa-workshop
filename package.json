@@ -1,20 +1,21 @@
 {
-  "name": "pwa-workshop",
-  "version": "1.0.0",
-  "description": "Workshop d'introduction aux Progressive Web Applications",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vuepress dev",
-    "build": "vuepress build",
-    "deploy": "deploy.sh"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sylvainpolletvillard/pwa-workshop.git"
-  },
-  "author": "Yassine Benabbas, Sylvain Pollet-Villard",
-  "bugs": {
-    "url": "https://github.com/sylvainpolletvillard/pwa-workshop/issues"
-  },
-  "homepage": "https://github.com/sylvainpolletvillard/pwa-workshop#readme"
+    "name": "pwa-workshop",
+    "version": "1.0.0",
+    "description": "Workshop d'introduction aux Progressive Web Applications",
+    "main": "index.js",
+    "scripts": {
+        "dev": "vuepress dev",
+        "build": "vuepress build",
+        "deploy": "deploy.sh"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sylvainpolletvillard/pwa-workshop.git"
+    },
+    "author": "Yassine Benabbas, Sylvain Pollet-Villard",
+    "bugs": {
+        "url": "https://github.com/sylvainpolletvillard/pwa-workshop/issues"
+    },
+    "homepage": "https://github.com/sylvainpolletvillard/pwa-workshop#readme",
+    "license": "MIT"
 }

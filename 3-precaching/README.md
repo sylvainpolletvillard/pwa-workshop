@@ -54,6 +54,8 @@ self.addEventListener('fetch', function(event) {
 
 On peut tester le mode offline maintenant en cochant la case **offline** et en décochant la case **update on reload** car on veut garder le Service Worker.
 
+Il se peut que des erreurs s'affichent sur chrome selon les extensions qui sont installées. Vous pouvez ajouter ce code au début du gestionnaire d'évènement fetch pour contourner ce problème.
+
 ```js
 // A ajouter dans fetch si pour ne pas gérer les requete autre que http
 if (!event.request.url.startsWith('http')) {
