@@ -35,6 +35,16 @@ aside {
   margin: 0.5em;
 }
 
+a {
+  cursor: pointer;
+  color: rgb(129, 51, 255);
+}
+
+a:hover {
+  text-decoration: underline;
+  text-shadow: 0 1px 1px rgba(129, 51, 255, 0.4);
+}
+
 .card {
   display: inline-block;
   padding: 0.5em;

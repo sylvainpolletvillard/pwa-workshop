@@ -41,7 +41,7 @@ Avantages:
 Inconvénients:
 
 - L'utilisateur ne doit pas pouvoir être en mesure d'interagir avec des données en cours de rafraichissement
-- Le rafraichissement de l'interface à la réception de la réponse réseau peut géner l'utilisateur si l'UX n'est pas bien pensée
+- Le rafraichissement de l'interface à la réception de la réponse réseau peut gêner l'utilisateur si l'UX n'est pas bien pensée
 
 ## Implémentation
 
