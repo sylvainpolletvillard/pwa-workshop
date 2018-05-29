@@ -88,3 +88,20 @@ Quand on rafraîchit la page sans modifier le Service Worker, on remarque qu'on 
 On peut comprendre qu'il est nécessaire de gérer en production la montée en version des Service Workers. En développement, on peut s'en passer en cochant la case **Update on reload**. Cette option permet d'activer immédiatement les futurs nouveaux Service Workers. C'est un équivalent d'un clic automatique sur **skipWaiting** à chaque fois.
 
 Dans cette partie, nous avons vu comment installer un Service Worker. On a également géré deux évènements du cycle de vie du Service Worker: **install** et **activate**. Nous allons maintenant voir comment faire quelque-chose d'utile avec ce Service Worker.
+
+
+On peut tester en ouvrant l'application depuis un mobile. Une fois l'app ouverte, ouvrir le menu et choisir l'option: **Add to home screen**
+
+![Add to home screen](./readme_assets/pwa_install_menu.jpg 'dd to home screen')
+
+Poursuivre l'installation. Un nouveau raccourci devrait apparaitre dans l'écran d'accueil du smartphone. C'est n'est autre que le raccourci de notre PWA !
+
+![PWA bookmark](./readme_assets/pwa_bookmark.jpg 'PWA bookmark')
+
+Une fois la PWA installé, on peut remarquer que le raccourci a été ajouté. Quand on clique sur le raccourci, un splash screen est affiché brièvement Celui-ci reprend les couleurs et l'icône spécifiée dans le manifeste.
+
+![Splash-screen](./readme_assets/pwa_splashscreen.jpg 'Splash-screen')
+
+Lancer et manipuler la PWA. On remarque que la barre d'adresse n'est pas présente.
+
+![PWA run from bookmark](./readme_assets/pwa_chrome_fullscreen.jpg 'PWA run from bookmark')
