@@ -15,7 +15,7 @@ L'API Background Sync quant à elle ne fait pas encore partie de la spécificati
 
 ## Notifications et permissions
 
-La synchronisation en tâche de fond ne nécessite pas de permissions particulières, en revanche afficher des notifications requiert le consentement de l'utilisateur. Pour éviter le spam, les navigateurs ont ajouté des contraintes à respecter pour pouvoir demander ces permissions. On peut par exemple le faire suite à une action de l'utilisateur comme le clic sur un lien. 
+La synchronisation en tâche de fond ne nécessite pas de permissions particulières, en revanche afficher des notifications requiert le consentement de l'utilisateur. Pour éviter le spam, les navigateurs ont ajouté des contraintes à respecter pour pouvoir demander ces permissions. On peut par exemple le faire suite à une action de l'utilisateur comme le clic sur un lien.
 
 Ajoutez donc un lien dans l'interface pour activer les notifications:
 
@@ -40,23 +40,23 @@ Lorsque l'utilisateur aura donné sa permission d'afficher des notifications, no
 
 Le client doit explicitement s'inscrire aux tâches de synchronisation en tâche de fond. Pour ce faire, on commence par récupérer une référence à la `ServiceWorkerRegistration`, qui représente le lien d'enregistrement entre votre Service Worker et votre client. Le plus simple pour cela est d'utiliser [`navigator.serviceWorker.ready`](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/ready) qui retourne une `Promise` résolue avec la `ServiceWorkerRegistration` lorsque le Service Worker est installé et actif.
 
- Une fois l'objet `registration` de type `ServiceWorkerRegistration` récupéré, nous pouvons appeler la méthode `registration.periodicSync.register` pour s'inscrire à une tâche de synchronisation périodique en tâche de fond. 
- 
+Une fois l'objet `registration` de type `ServiceWorkerRegistration` récupéré, nous pouvons appeler la méthode `registration.periodicSync.register` pour s'inscrire à une tâche de synchronisation périodique en arrière-plan.
+
 ```js
 function registerBackgroundSync() {
-	if (!navigator.serviceWorker){
+    if (!navigator.serviceWorker){
         return console.error("Service Worker not supported")
-	}
+    }
 
-	navigator.serviceWorker.ready
-		.then(registration => registration.periodicSync.register({
-			tag: 'syncAttendees',
-			minPeriod: 60 * 1000, // 1 minute
-			powerState: 'auto',
-			networkState: 'any'
-		}))
-		.then(() => console.log("Registered background sync"))
-		.catch(err => console.error("Error registering background sync", err))
+    navigator.serviceWorker.ready
+        .then(registration => registration.periodicSync.register({
+            tag: 'syncAttendees',
+            minPeriod: 60 * 1000, // 1 minute
+            powerState: 'auto',
+            networkState: 'any'
+        }))
+        .then(() => console.log("Registered background sync"))
+        .catch(err => console.error("Error registering background sync", err))
 }
 ```
 
@@ -64,21 +64,21 @@ Voici une description des différents paramètres :
 
 Paramètre         | Description
 ------------------|--------------
- tag	          | Identifiant de la tâche de synchronisation |
- minPeriod        |	Période minimum en millisecondes entre deux synchronisations. Si à zéro, géré par le système
- powerState       |	"auto" (par défaut) ou "avoid draining". Permet de reporter les synchronisations si la batterie de l''appareil se décharge
- networkState     | "online" (par défaut) ou "avoid-cellular" ou "any". Permet de reporter les synchronisations si l'appareil est en connexion cellulaire.
+tag              | Identifiant de la tâche de synchronisation |
+minPeriod        | Période minimum en millisecondes entre deux synchronisations. Si à zéro, géré par le système
+powerState       | "auto" (par défaut) ou "avoid draining". Permet de reporter les synchronisations si la batterie de l''appareil se décharge
+networkState     | "online" (par défaut) ou "avoid-cellular" ou "any". Permet de reporter les synchronisations si l'appareil est en connexion cellulaire.
 -----------------------------------------
 
 Notez que ces paramètres ne seront pas forcément respectés, car peuvent être surchargés par une configuration propre à l'appareil, au système ou aux préférences de l'utilisateur.
 
-Côté Service Worker, un évènement de type `periodicsync` sera émis lorsque le système décide de déclencher une synchronisation. Notez que pour les synchronisations préiodiques, puisqu'elles sont gérées par le système, nous ne pouvons pas être sûrs du moment où elles sont déclenchées. Tout ce que nous pouvons faire est de renseigner les paramètres évoqués ci-dessus et attendre que le système déclenche une synchronisation.
- 
+Côté Service Worker, un évènement de type `periodicsync` sera émis lorsque le système décide de déclencher une synchronisation. Notez que pour les synchronisations périodiques, puisqu'elles sont gérées par le système, nous ne pouvons pas être sûrs du moment où elles sont déclenchées. Tout ce que nous pouvons faire est de renseigner les paramètres évoqués ci-dessus et attendre que le système déclenche une synchronisation.
+
 ```js
 self.addEventListener('periodicsync', function(event) {
-  if (event.registration.tag === 'syncAttendees') {
-    event.waitUntil(syncAttendees()); // lance la requête d'actualisation
-  }
+    if (event.registration.tag === 'syncAttendees') {
+        event.waitUntil(syncAttendees()); // lance la requête d'actualisation
+    }
 });
 ```
 
@@ -107,4 +107,4 @@ Si le client dispose de la permission d'afficher des notifications, la méthode 
 
 Comme pour les étapes précédentes, assurez-vous que la case *Update on reload* est cochée dans les Developer Tools afin de toujours recharger la dernière version du Service Worker. De la même façon, vérifiez également que `scripts.js` n'est pas servi en precaching suite à l'étape 3.
 
-Au clic sur le lien d'activation des notifications, une demande de permission devrait s'afficher. Après avoir accepté, vous devriez observer dans la console le log `Registered background sync`. Il ne vous reste plus qu'à attendre que le système déclenche une synchronisation et affiche la notification, ce qui devrait prendre 30 secondes maximum d'après le paramétrage. Si l'application web est au premier plan, la liste des participants devrait également être actualisée grâce à la fonction `refresh` dans `syncAttendees`.
+Au clic sur le lien d'activation des notifications, une demande de permission devrait s'afficher. Après avoir accepté, vous devriez observer dans la console le log `Registered background sync`. Il ne vous reste plus qu'à attendre que le système déclenche une synchronisation et affiche la notification, ce qui devrait prendre 30 secondes maximum d'après le paramétrage Si l'application web est au premier plan, la liste des participants devrait également être actualisée grâce à la fonction `refresh` dans `syncAttendees`.
