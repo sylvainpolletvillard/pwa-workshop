@@ -58,7 +58,7 @@ self.addEventListener('fetch', function(event) {
     
     // réponse aux requêtes de fichiers statiques
     event.respondWith(...)    
-}
+})
 ```
 
 Toutes nos requêtes vers l'API passent par le même endpoint, indiqué dans `scripts.js` dans la constante `API_ROOT`. On peut donc identifier ces requêtes en se basant sur l'URL de la requête, accessible depuis notre objet `event`. Pour vous aider, voici la [documentation de l'API FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent).
