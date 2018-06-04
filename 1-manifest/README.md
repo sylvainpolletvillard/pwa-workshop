@@ -9,7 +9,7 @@ Commençons par créer le fichier manifest. Ce fichier est défini ainsi par [MD
 
 > The web app manifest provides information about an application (such as name, author, icon, and description) in a JSON text file.
 
-En français; le manifeste d'application web fournit des informations sur l'application (comme son nom, son icône et sa description) dans un fichier JSON.
+En français: le manifeste d'application web fournit des informations sur l'application (comme son nom, son icône et sa description) dans un fichier texte JSON.
 
 La présence d'un manifeste procure également d'autres avantages. En voici quelques uns:
 
@@ -19,13 +19,13 @@ La présence d'un manifeste procure également d'autres avantages. En voici quel
 
 ## Propriétés du manifeste
 
-Le manifeste est un fichier JSON contient plusieurs champs. Il est recommandé de renseigner un maximum de champs afin de permettre à la PWA d'être reconnue comme telle par les navigateurs et les stores. Voici la liste des attributs du manifeste [source](https://medium.com/@subodhgarg/web-app-manifest-file-make-your-web-app-installable-b5fcdb2919b9), [source](https://developer.mozilla.org/fr/docs/Web/Manifest):
+Le manifeste est un fichier JSON contient plusieurs champs. Il est recommandé de renseigner un maximum de champs afin de permettre à la PWA d'être reconnue comme telle par les navigateurs et les stores. Voici la [liste des attributs du manifeste](https://developer.mozilla.org/fr/docs/Web/Manifest):
 
 * `name`  —  affiché sur le splashscreen
 * `short_name ` —  affiché en dessous du raccourci sur le bureau ou l'écran d'accueil
 * `description ` —  une description générale de l'application
 * `start_url ` — l'URL qui est chargée en premier quand on ouvre l'application depuis son raccourci sur le bureau ou l'écran d'accueil
-* `scope`  —  les pages du site faisant partie de l'expérience PWA. "." inclue tout ce qui se situe dans l'arborescence de manifeste. Il est donc plus pertinent de placer ce dernier à la racine du site
+* `scope`  —  les pages du site faisant partie de l'expérience PWA. La valeur `"."` inclue tout ce qui se situe dans l'arborescence de manifeste. Il est donc plus pertinent de placer ce dernier à la racine du site
 * `background_color `—   La couleur d'arrière-plan du splashscreen
 * `theme_color ` —  la couleur de thème général de l'application, utilisée notamment dans les barres de statut si elles sont affichées
 * `display `—   spécifie le mode d'affichage. Voici les différents modes disponibles triés par ordre de fallback :

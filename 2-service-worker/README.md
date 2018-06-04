@@ -5,15 +5,16 @@ lang: fr
 
 # Etape 2 : Installation d'un Service Worker
 
-Le Service Worker permet principalement de simplifier la mise en cache et la support du mode offline.
+Le Service Worker est une API assez vaste et présentant beaucoup de potentiel. Dans le cadre d'une PWA, le Service Worker va principalement nous permettre de définir une stratégie de mise en cache et ainsi mieux gérer les connexions capricieuses, voire un mode offline complet pour notre application.
 
 Voici quelques [spécificités](https://developers.google.com/web/fundamentals/primers/service-workers/) des Service Workers:
 
-* Ce sont des workers javascript. Il ne peuvent pas accéder au DOM directement mais il peuvent communiquer avec les pages qu'ils contrôlent et ces dernières peuvent manipuler le DOM. L'API utilisée pour la communication est `postMessage`.
-* Ce sont des proxy réseau programmables. En effet, il proposent des évènement qui permettent personnaliser la gestion des requêtes émises pas vos pages.
-* Ils sont automatiquement terminés lorsqu'ils ne sont pas utilisés et ils sont redémarres si besoin.
-* Plusieurs API sont disponibles pour persister les données dans le services worker, par exemple [**Cache API**](https://developer.mozilla.org/fr/docs/Web/API/Cache) et `IndexdedDB`.
-* Il se base sur l'utilisation des promesses.
+* Ce sont des workers codés en JavaScript. Ils s'éxécutent dans un thread distinct du script applicatif et ne peuvent pas accéder au DOM ni aux variables globales, mais l'application peut communiquer avec le worker grâce à l'API `postMessage`.
+* Ce sont des proxy réseau programmables. En effet, ils permettent d'intercepter les requêtes réseau en partance du navigateur et de personnaliser leurs réponses.
+* Ils ont un cycle de vie indépendant de l'application wev associée. Ils s'arrêtent lorsqu'ils ne sont pas utilisés et redémarrent au besoin.
+* Ils peuvent fonctionner sans que l'application web associée tourne, ce qui permet certaines fonctionnalités inédites comme l'envoi de notifications Push.
+* Plusieurs API sont disponibles au sein du Service Worker pour persister les données localement, par exemple l'[**API Cache**](https://developer.mozilla.org/fr/docs/Web/API/Cache) et l'[**API IndexedDB**](https://developer.mozilla.org/fr/docs/Web/API/API_IndexedDB).
+* La plupart des API associées sont basées sur l'utilisation des promesses ([`Promise`](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Promise)).
 
 Dans le dossier `app`, créez un fichier `sw.js` vide (pour l'instant). Il contiendra le code de votre Service Worker.
 
@@ -86,7 +87,5 @@ Service Worker activating.
 Quand on rafraîchit la page sans modifier le Service Worker, on remarque qu'on ne passe plus par les étapes d'installation et d'activation.
 
 On peut comprendre qu'il est nécessaire de gérer en production la montée en version des Service Workers. En développement, on peut s'en passer en cochant la case **Update on reload**. Cette option permet d'activer immédiatement les futurs nouveaux Service Workers. C'est un équivalent d'un clic automatique sur **skipWaiting** à chaque fois.
-
-Est-ce que la fonction _Add to home screen_ fonctionne ?
 
 Dans cette partie, nous avons vu comment installer un Service Worker. On a également géré deux évènements du cycle de vie du Service Worker: **install** et **activate**. Nous allons maintenant voir comment faire quelque-chose d'utile avec ce Service Worker.
