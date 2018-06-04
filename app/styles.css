@@ -1,138 +1,138 @@
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.2rem;
-  margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+    margin: 0;
 }
 
 header {
-  background-color: #c6acee;
-  background-image: url('logo.svg');
-  background-size:auto;
-  background-position: center right 1em;
-  background-repeat: no-repeat;
-  color: #eee;
-  font-size: 1.4rem;
+    background-color: #c6acee;
+    background-image: url('icons/logo.svg');
+    background-size: auto;
+    background-position: center right 1em;
+    background-repeat: no-repeat;
+    color: #eee;
+    font-size: 1.4rem;
 }
 
 header,
 section,
 footer {
-  padding: 0.5em 1em;
+    padding: 0.5em 1em;
 }
 
 section {
-  max-width: 1280px;
-  margin: auto;
+    max-width: 1280px;
+    margin: auto;
 }
 
 aside {
-  float: right;
-  background-color: #f6f6f0;
-  padding: 0.5em 1em;
-  margin: 0.5em;
+    float: right;
+    background-color: #f6f6f0;
+    padding: 0.5em 1em;
+    margin: 0.5em;
 }
 
 a {
-  cursor: pointer;
-  color: rgb(129, 51, 255);
+    cursor: pointer;
+    color: rgb(129, 51, 255);
 }
 
 a:hover {
-  text-decoration: underline;
-  text-shadow: 0 1px 1px rgba(129, 51, 255, 0.4);
+    text-decoration: underline;
+    text-shadow: 0 1px 1px rgba(129, 51, 255, 0.4);
 }
 
 .card {
-  display: inline-block;
-  padding: 0.5em;
-  margin: 0.25em 0.5em;
-  background-color: #f6f6f0;
-  box-shadow: 5px 5px 10px #999;
+    display: inline-block;
+    padding: 0.5em;
+    margin: 0.25em 0.5em;
+    background-color: #f6f6f0;
+    box-shadow: 5px 5px 10px #999;
 }
 
 .avatar {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 .card span {
-  vertical-align: top;
+    vertical-align: top;
 }
 
 .card p {
-  margin: 0;
+    margin: 0;
 }
 
 fieldset {
-  border: none;
+    border: none;
 }
 
 form label {
-  display: block;
-  font-size: 0.8em;
-  color: gray;
+    display: block;
+    font-size: 0.8em;
+    color: gray;
 }
 
 form input {
-  border: 1px solid #ccc;
-  padding: 0.5em;
-  border-radius: 0.5em;
-  min-width: 20em;
+    border: 1px solid #ccc;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    min-width: 20em;
 }
 
 button {
-  font-size: 1.4rem;
-  font-family: 'Montserrat', sans-serif;
+    font-size: 1.4rem;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .actions {
-  margin: 1em;
-  text-align: center;
+    margin: 1em;
+    text-align: center;
 }
 
 .actions button:not([disabled]) {
-  background-color: #5a0fc8;
-  color: #eee;
-  box-shadow: 0 0 15px #999;
+    background-color: #5a0fc8;
+    color: #eee;
+    box-shadow: 0 0 15px #999;
 }
 
 .flex {
-  display: flex;
+    display: flex;
 }
 
 .col {
-  flex: 1;
+    flex: 1;
 }
 
 .row {
-  flex: auto;
+    flex: auto;
 }
 
 #register form {
-  background-color: #f6f6f0;
-  padding: 0.5em 1em;
-  margin-right: 1em;
+    background-color: #f6f6f0;
+    padding: 0.5em 1em;
+    margin-right: 1em;
 }
 
 footer {
-  display: block;
-  margin: 1em 0 0 0;
-  background-color: #333;
-  color: #eee;
+    display: block;
+    margin: 1em 0 0 0;
+    background-color: #333;
+    color: #eee;
 }
 
 footer a {
-  color: #fff;
+    color: #fff;
 }
 
 .license {
-  font-size: 1rem;
+    font-size: 1rem;
 }
 
 .license img {
-  vertical-align: middle;
-  margin-right: 0.5em;
+    vertical-align: middle;
+    margin-right: 0.5em;
 }
