@@ -76,9 +76,9 @@ Vérifions, l'écran Service Worker des devtools. Un affichage similaire à la c
 
 ![Service Worker en attente d'installation](./readme_assets/sw-waiting.png 'Service Worker en attente')
 
-Quand on rafraîchit la page, le navigateur essaie d'installer puis d'activer un nouveau Service Worker. Comme ce dernier est différent du Service Worker actif, son activation est suspendue. Dans ce cas, Il entre en attente et ne sera installé que si le précédent Service Worker ne contrôle aucun client. On a deux solutions dans ce cas: soit fermer tous les onglets controlés par le premier Service Worker ou bien cliquer sur le bouton **skipWaiting**.
+Quand on rafraîchit la page, le navigateur essaie d'installer puis d'activer un nouveau Service Worker. Comme ce dernier est différent du Service Worker actif, son activation est suspendue. Dans ce cas, Il entre en attente et ne sera installé que si le précédent Service Worker ne contrôle aucun client. On a deux solutions dans ce cas: soit fermer tous les onglets controlés par le premier Service Worker ou bien cliquer sur le lien **skipWaiting**.
 
-Cliquez sur le bouton **skipWaiting**. Et là, on remarque que l'ancien Service Worker a disparu et que celui qui était en attente prend sa place. Le log d'activation s'affiche également.
+Cliquez sur le lien **skipWaiting**. On remarque que l'ancien Service Worker a disparu et que celui qui était en attente prend sa place. Le log d'activation s'affiche également.
 
 ```
 Service Worker activating.
@@ -87,5 +87,9 @@ Service Worker activating.
 Quand on rafraîchit la page sans modifier le Service Worker, on remarque qu'on ne passe plus par les étapes d'installation et d'activation.
 
 On peut comprendre qu'il est nécessaire de gérer en production la montée en version des Service Workers. En développement, on peut s'en passer en cochant la case **Update on reload**. Cette option permet d'activer immédiatement les futurs nouveaux Service Workers. C'est un équivalent d'un clic automatique sur **skipWaiting** à chaque fois.
+
+::: tip Note
+Pensez à activer l'option **Update on reload** lorsque vous travaillez sur le code d'un Service Worker 
+:::
 
 Dans cette partie, nous avons vu comment installer un Service Worker. On a également géré deux évènements du cycle de vie du Service Worker: **install** et **activate**. Nous allons maintenant voir comment faire quelque-chose d'utile avec ce Service Worker.
