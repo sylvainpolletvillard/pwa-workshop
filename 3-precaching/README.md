@@ -20,7 +20,7 @@ Enfin, une autre méthode intéressante du cache est `match`: elle vérifie dans
 Nous allons mettre les fichiers statiques essentiels de l'application en cache. Le moment opportun pour mettre en cache le contenu statique est l'évènement `install` du Service Worker, car il n'est appelé qu'une fois lors de son installation.
 
 1. Placez-vous dans le code du Service Worker dans le callback de l'événement `install` que vous avez dû ajouter à l'étape 2.
-2. Ouvrez le cache avec [`caches.open('nom_du_cache')`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/open), qui retourne une promesse résolue avec l'instance de l'objet `cache`. Pensez à indiquer un numéro de version dans le nom du cache, vous pouvez opter pour un numéro de version, cela nous sera utile pour les mises à jour ultérieures.
+2. Ouvrez le cache avec [`caches.open('nom_du_cache')`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/open), qui retourne une promesse résolue avec l'instance de l'objet `cache`. Pensez à indiquer un numéro de version dans le nom du cache, cela nous sera utile pour les mises à jour ultérieures.
 3. Une fois le cache ouvert, ajoutez ensuite les fichiers statiques `index.html`, `styles.css` et `scripts.js` au cache avec [`cache.addAll(liste_des_urls)`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll).
 
 <!-- Solution:
