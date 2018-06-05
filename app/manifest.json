@@ -1,0 +1,22 @@
+{
+  "name": "PWA Workshop",
+  "short_name": "PWA Workshop",
+  "lang": "fr-FR",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#c6acee",
+  "icons": [
+    {
+      "src": "icons/logo_192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/logo.png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "icons/logo.svg",
+      "sizes": "513x513"
+    }
+  ]
+}
