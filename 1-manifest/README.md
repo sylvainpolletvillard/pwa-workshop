@@ -46,17 +46,19 @@ Comme le manifeste d'application est un fichier texte, on peut opter pour l'écr
 * [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/)
 * [Web App Manifest Generator](https://tomitm.github.io/appmanifest/).
 
-En utilisant un de ces outils, générons un fichier manifeste exhaustif.
+En utilisant un de ces outils, générez un fichier manifeste exhaustif. Votre manifeste devra au moins contenir les propriétés suivantes: `name`, `short_name`, `lang`, `start_url`, `display: "standalone"`, `theme_color` et `icons` avec au moins deux icônes PNG et une SVG aux tailles recommandées.
 
-Exemple :
+On peut ensuite enregistrer le manifeste dans un fichier texte appelé `manifest.json` à la racine du site.
+
+<Solution>
 ```json
 {
   "name": "Progressive Web Apps Workshop",
   "short_name": "PWA Workshop",
   "lang": "fr",
   "start_url": "/",
-  "display": "fullscreen",
-  "theme_color": "#c2f442",
+  "display": "standalone",
+  "theme_color": "#c6acee",
   "icons": [
     {
       "src": "icons/logo-192.png",
@@ -73,8 +75,7 @@ Exemple :
   ]
 }
 ```
-
-On peut ensuite enregistrer le manifeste dans un fichier texte appelé `manifest.json` à la racine du site.
+</Solution>
 
 ## Ajout du manifeste dans l'application
 

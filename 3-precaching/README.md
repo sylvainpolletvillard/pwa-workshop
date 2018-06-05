@@ -23,7 +23,8 @@ Nous allons mettre en cache les fichiers statiques essentiels de l'application, 
 2. Ouvrez le cache avec [`caches.open('V1')`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/open), qui retourne une promesse résolue avec l'objet `cache`. Le numéro de version dans le nom du cache nous sera utile pour les mises à jour ultérieures.
 3. Une fois le cache ouvert, ajoutez ensuite les fichiers statiques `index.html`, `styles.css` et `scripts.js` au cache avec [`cache.addAll(['url1','url2',...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll).
 
-<!-- Solution:
+<Solution>
+```js
 const CACHE_NAME = 'V1';
 const STATIC_FILES = ['index.html', 'styles.css', 'scripts.js'];
 
@@ -31,7 +32,8 @@ self.addEventListener('install', event => {
   console.log('Service Worker installing.');
   caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES))
 });
--->
+```
+</Solution>
 
 Rechargez la page et le Service Worker, en vérifiant bien que la nouvelle version du Service Worker remplace l'ancienne comme vu à l'étape 2. On peut alors vérifier que les fichiers sont ajoutés dans le cache en consultant l'écran *Cache Storage* de l'onglet *Application* des Developer Tools.
 
@@ -57,7 +59,8 @@ Nous voulons changer le comportement par défaut et retourner les versions préa
 3. Si aucune entrée dans le cache n'est trouvée, la promesse est résolue avec la valeur `undefined`. Dans ce cas, il faut requêter le réseau et retourner `fetch(event.request)` à la place.
 4. Il ne reste plus qu'à retourner cette promesse de réponse à la requête en la passant en argument à `event.responseWith()` 
 
-<!-- Solution:
+<Solution>
+```js
 self.addEventListener('fetch', event => {
   // Personnalisation de la réponse
   event.respondWith(
@@ -65,7 +68,8 @@ self.addEventListener('fetch', event => {
     .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
   );
 });
--->
+```
+</Solution>
 
 ## Test de fonctionnement offline
 
@@ -83,11 +87,9 @@ Pour gérer ce problème, une solution est de passer par un nouveau cache avec u
 2. Dans le callback de l'événement `activate`, supprimez l'ancien cache avec `caches.delete('V1')`
 3. Améliorez votre code de nettoyage des anciens caches en supprimant tous les caches qui ne font pas partie de votre liste de caches connus et utilisés. Vous pouvez parcourir tous les caches existants avec la méthode `caches.keys()`
 
-<!-- Solution:
+<Solution>
 ```js
 const CACHE_NAME = 'V2';
-
-(...)
 
 self.addEventListener('activate', event => {
   // delete any unexpected caches
@@ -101,7 +103,7 @@ self.addEventListener('activate', event => {
   );
 });
 ```
--->
+</Solution>
 
 [Plus d'informations sur la mise à jour d'un Service Worker](https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#updates).
 
