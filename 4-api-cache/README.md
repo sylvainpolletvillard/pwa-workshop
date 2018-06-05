@@ -109,6 +109,18 @@ client.postMessage(JSON.stringify({
 
 Le message devra être un objet constitué a minima d'une propriété pour identifier le type de message (l'URL de la requête correspondante par exemple) et d'une autre propriété contenant les données à transmettre (le contenu de la réponse).
 
+Une fois les 3 blocs `cache`, `update` et `refresh` finalisés, il ne reste plus qu'à les assembler pour établir la stratégie: la réponse du cache avec un `event.respondWith`, puis en parallèle l'update suivi du refresh dans un `event.waitUntil`.
+
+<Solution>
+```js
+if(event.request.url.includes("/api/")){
+    // réponse aux requêtes API, stratégie Cache Update Refresh
+    matchCache(event.request).then(cached => cached && event.respondWith(cached))
+    event.waitUntil(update(event.request).then(refresh))
+}
+```
+</Solution>
+
 ## Rafraîchissement côté applicatif
 
 Le client peut écouter les messages émis par le Service Worker via le callback `navigator.serviceWorker.onMessage`. Vous pouvez ensuite désérialiser le message avec `JSON.parse(event.data)`.
