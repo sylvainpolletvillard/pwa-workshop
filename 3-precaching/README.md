@@ -37,7 +37,7 @@ self.addEventListener('install', event => {
 
 Rechargez la page et le Service Worker, en vérifiant bien que la nouvelle version du Service Worker remplace l'ancienne comme vu à l'étape 2. On peut alors vérifier que les fichiers sont ajoutés dans le cache en consultant l'écran *Cache Storage* de l'onglet *Application* des Developer Tools.
 
-![Cache storage](./readme_assets/cache_storage.png 'Service Worker en attente')
+![Cache storage](./readme_assets/cache_storage.png)
 
 ## Réponse avec le cache en priorité
 
