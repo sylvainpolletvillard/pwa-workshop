@@ -16,7 +16,7 @@ Nous allons ensemble transformer une application web classique en une PWA. Cela 
 - Connaître les bases du HTML, CSS et JavaScript.
 - Un poste de travail muni d'un **éditeur de code** tel que [Visual Studio Code](https://code.visualstudio.com/)
 - **Google Chrome** (*les PWA sont supportées par la plupart des navigateurs mais pour faciliter l'organisation, nous utiliserons tous le même navigateur pendant le développement*)
-- Un **serveur web local HTTPS** (si vous n'en avez pas, essayez [npmjs.com/serve](http://npmjs.com/serve) et la commande `cd app && serve --ssl`
+- Un **serveur web local** (si vous n'en avez pas, essayez [npmjs.com/serve](http://npmjs.com/serve) et la commande `cd app && serve`
 
 # Préparation
 - [Clôner ou télécharger la web app d'exemple](https://github.com/sylvainpolletvillard/pwa-workshop.git) qui se trouve dans le dossier [app](https://github.com/sylvainpolletvillard/pwa-workshop/tree/master/app) de ce repo.
