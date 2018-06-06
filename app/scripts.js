@@ -10,7 +10,7 @@ function fetchAttendees(){
 function renderAttendees(attendees=[]){
 	const attendeesSection = document.getElementById("attendees");
 	attendeesSection.innerHTML = `
-	<h1>Attendees: ${attendees.length}</h1>
+	<h1>Attendees: ${attendees.length} / ${nbMaxAttendees}</h1>
 	<ul>
 		${attendees.map(user => `
 		<li class='card'>
