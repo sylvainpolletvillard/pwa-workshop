@@ -10,7 +10,8 @@ function fetchAttendees(){
 function renderAttendees(attendees=[]){
 	const attendeesSection = document.getElementById("attendees");
 	attendeesSection.innerHTML = `
-	<h1>Attendees: ${attendees.length}</h1>
+	<h1>Attendees: ${attendees.length} / ${nbMaxAttendees}</h1>
+	<a onclick="registerNotification()">Notify me when there are new attendees</a>
 	<ul>
 		${attendees.map(user => `
 		<li class='card'>
@@ -31,6 +32,24 @@ function renderAttendees(attendees=[]){
 	registerSection.querySelector(".status").innerHTML = isFull
 		? `Sorry, this event is full.`
 		: `Some places are still available for you to register for this event.`
+}
+
+function registerNotification() {
+	Notification.requestPermission(permission => {
+		if (permission === 'granted'){ registerBackgroundSync() }
+		else console.error("Permission was not granted.")
+	})
+}
+
+function registerBackgroundSync() {
+	if (!navigator.serviceWorker){
+		return console.error("Service Worker not supported")
+	}
+
+	navigator.serviceWorker.ready
+	.then(registration => registration.sync.register('syncAttendees'))
+	.then(() => console.log("Registered background sync"))
+	.catch(err => console.error("Error registering background sync", err))
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -54,6 +73,4 @@ document.addEventListener("DOMContentLoaded", () => {
 			console.log('Error registering the Service Worker: ' + error);
 		});
 	}
-
-	//TODO: Etape 4 - Réception de messages depuis le Service Worker
 });

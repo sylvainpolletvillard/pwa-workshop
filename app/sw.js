@@ -1,4 +1,4 @@
-const CACHE_NAME = 'V1';
+const CACHE_NAME = 'V2';
 const STATIC_CACHE_URLS = ['/', 'styles.css', 'scripts.js'];
 
 const delay = ms => _ => new Promise(resolve => setTimeout(() => resolve(_), ms))
@@ -38,6 +38,13 @@ self.addEventListener('fetch', event => {
 	}
 })
 
+self.addEventListener('sync', function(event) {
+	console.log("sync event", event);
+	if (event.tag === 'syncAttendees') {
+		event.waitUntil(syncAttendees()); // on lance la requête de synchronisation
+	}
+});
+
 function update(request) {
 	// mockup: on charge au hasard entre 1 et 10 participants
 	return fetch(request.url + `?per_page=${Math.ceil(Math.random() * 10)}`)
@@ -66,4 +73,12 @@ function refresh(response) {
 			})
 			return jsonResponse.data; // résout la promesse avec les nouvelles données
 		})
+}
+
+function syncAttendees(){
+	return update({ url: `https://reqres.in/api/users` })
+		.then(refresh)
+		.then((attendees) => self.registration.showNotification(
+			`${attendees.length} attendees to the PWA Workshop`
+		))
 }
