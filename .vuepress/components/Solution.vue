@@ -1,13 +1,21 @@
 <template>
-    <details>
-        <summary>Voir la solution</summary>
+    <details @toggle="toggle" :class="{ visible: isVisible, hidden: !isVisible }">
+        <summary>{{isVisible ? "Solution": "Voir la solution"}}</summary>
         <slot></slot>
     </details>
 </template>
 
 <script>
 	export default {
-		name: "Solution"
+		name: "Solution",
+        data: () => ({
+			isVisible: false
+        }),
+        methods: {
+			toggle(event){
+				this.isVisible = event.target.open
+            }
+        }
 	}
 </script>
 
@@ -19,7 +27,7 @@
     }
 
     summary {
-        cursor: help;
         outline: none;
+        cursor: help;
     }
 </style>

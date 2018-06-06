@@ -17,6 +17,8 @@ Pour chaque requête, le service Worker va dans un premier temps retourner immé
 
 Ce rafraichissement de l'interface peut se concrétiser de différentes manières selon les cas. On peut simplement ajouter dynamiquement des éléments à une liste, comme des messages dans une conversation instantanée par exemple. Ou alors notifier l'utilisateur d'une autre manière, par exemple avec un lien proposant de charger le nouveau contenu disponible.
 
+![Schema de fonctionnement](./readme_assets/schema.png)
+
 Avantages:
 
 - Chargement instantané si une réponse est en cache
@@ -49,73 +51,85 @@ Toutes nos requêtes vers l'API passent par le même endpoint contenant `/api/` 
 
 ### 1. Cache
 
-La première étape est de répondre immédiatement avec la réponse en cache si elle existe. Vous pouvez pour cela réutiliser le code de l'étape 3 pour la réponse aux requêtes de ressources statiques.
+La première étape est de répondre immédiatement avec la réponse en cache si elle existe. Vous pouvez pour cela réutiliser la fonction `caches.match` vu à l'étape 3 pour la réponse aux requêtes de ressources statiques.
+
+<Solution>
+```js
+if (event.request.url.includes("/api/")) {
+    // réponse aux requêtes API, stratégie Cache Update Refresh
+    event.respondWith(caches.match(event.request))
+    //TODO: update et refresh
+}
+```
+</Solution>
 
 ### 2. Update
 
-En parallèle, la requête au réseau doit également être faite avec la méthode `fetch(request)`.
-
-Vous pouvez tout à fait continuer à utiliser l'objet `event` dans la suite du code même après un premier `event.respondWith`. Cependant, vous devrez alors utiliser la méthode `event.waitUntil()` pour étendre la durée de vie de l'événement et indiquer au navigateur que d'autres tâches doivent être effectuées au delà de la réponse initiale.
+En parallèle, la requête au réseau doit également être faite avec la méthode `fetch(request)`, puis on met à jour le cache avec la réponse via la méthode `cache.put`. Déclarez la fonction `update` ci-dessous dans le code du Service Worker:
 
 ```js
 function update(request) {
-	return fetch(request)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network error');
-        }
-        
-        // on peut mettre en cache la réponse            
-        return response;
-    })
+	return fetch(request.url)
+	.then(response => {		
+		if (!response.ok) { throw new Error('Network error'); }
+
+		// on peut mettre en cache la réponse
+		return caches.open(CACHE_NAME)
+		.then(cache => cache.put(request, response.clone()))
+		.then(() => response) // résout la promesse avec l'objet Response		
+	})	
 }
 ```
-
-La réponse réseau doit ensuite être mise dans le cache. Ouvrez le cache comme à l'étape précédente, puis ajoutez la réponse réseau avec la méthode `cache.put(request, response.clone())`. 
 
 ::: warning Attention
 Une réponse ne peut être lue qu'une seule fois, elle doit donc être clonée avec la méthode `.clone()` avant de la stocker en cache.
 :::
 
+Ensuite, appelez cette fonction `update` dans le callback de `fetch` en parallèle de la réponse avec la version en cache. Vous pouvez tout à fait continuer à utiliser l'objet `event` dans la suite du code même après un premier `event.respondWith`. Cependant, vous devrez alors utiliser la méthode `event.waitUntil()` pour étendre la durée de vie de l'événement et indiquer au navigateur que d'autres tâches doivent être effectuées au delà de la réponse initiale.
+
+<Solution>
+```js
+if (event.request.url.includes("/api/")) {
+    // réponse aux requêtes API, stratégie Cache Update Refresh
+    event.respondWith(caches.match(event.request))
+    event.waitUntil(update(event.request)) //TODO: refresh
+}
+```
+</Solution>
+
 ### 3. Refresh
 
 Si le réseau a répondu et que la réponse a été mise en cache, on souhaite indiquer à l'application que de nouvelles données sont disponibles afin d'actualiser l'affichage.
 
-La fonction `update` retourne une `Promise` de `Response`, vous pouvez donc la chaîner avec `.then()` pour exécuter une autre fonction à la suite d'une réponse réseau.
+Les applications ayant un Service Worker inscrit et installé sont appelés "clients" au regard de ce Service Worker, et sont accessibles via [l'API `Clients` documentée ici](https://developer.mozilla.org/en-US/docs/Web/API/Clients). Le Service Worker communique avec le client par le biais de la méthode `client.postMessage`. Le format d'échange est textuel, vous devrez donc sérialiser vos données en JSON. Le message transmis sera un objet constitué a minima d'une propriété pour identifier le type de message (ici on a choisi l'URL de la requête correspondante) et d'une autre propriété contenant les données à transmettre (le contenu de la réponse).
 
-Les applications ayant un Service Worker inscrit et installé sont appelés "clients" au regard de ce Service Worker, et sont accessibles via [l'API `Clients` documentée ici](https://developer.mozilla.org/en-US/docs/Web/API/Clients)
+Déclarez la fonction `refresh` ci-dessous dans le code du Service Worker. 
 
 ```js
 function refresh(response) {
 	return response.json() // lit et parse la réponse JSON
-	.then(newData => {
+	.then(jsonResponse => {
 		self.clients.matchAll().then(clients => {
 			clients.forEach(client => {
 				// signaler et envoyer au client les nouvelles données
+				client.postMessage(JSON.stringify({
+                    type: response.url,
+                    data: jsonResponse.data
+                }))
 			})
 		})
+		return jsonResponse.data; // résout la promesse avec les nouvelles données
 	})
 }
 ```
 
-Le Service Worker communique avec le client par le biais de la méthode `client.postMessage`. Le format d'échange est textuel, vous devrez donc sérialiser vos données en JSON comme ceci:
-
-```js
-client.postMessage(JSON.stringify({
-    type: response.url,
-    data: newData
-}))
-```
-
-Le message devra être un objet constitué a minima d'une propriété pour identifier le type de message (l'URL de la requête correspondante par exemple) et d'une autre propriété contenant les données à transmettre (le contenu de la réponse).
-
-Une fois les 3 blocs `cache`, `update` et `refresh` finalisés, il ne reste plus qu'à les assembler pour établir la stratégie: la réponse du cache avec un `event.respondWith`, puis en parallèle l'update suivi du refresh dans un `event.waitUntil`.
+Il ne reste plus qu'à assembler les 3 blocs `cache`, `update` et `refresh` pour établir la stratégie: la réponse du cache avec un `event.respondWith`, puis en parallèle l'update suivi du refresh dans un `event.waitUntil`. La fonction `update` retourne une `Promise` résolue avec la réponse réseau, vous pouvez donc la chaîner avec `.then()` pour exécuter une autre fonction à la suite d'une réponse réseau.
 
 <Solution>
 ```js
 if(event.request.url.includes("/api/")){
     // réponse aux requêtes API, stratégie Cache Update Refresh
-    matchCache(event.request).then(cached => cached && event.respondWith(cached))
+    event.respondWith(caches.match("api"))
     event.waitUntil(update(event.request).then(refresh))
 }
 ```
@@ -123,29 +137,45 @@ if(event.request.url.includes("/api/")){
 
 ## Rafraîchissement côté applicatif
 
-Le client peut écouter les messages émis par le Service Worker via le callback `navigator.serviceWorker.onMessage`. Vous pouvez ensuite désérialiser le message avec `JSON.parse(event.data)`.
+Le client peut écouter les messages émis par le Service Worker via le callback `navigator.serviceWorker.onmessage`. Vous pouvez ensuite désérialiser le message avec `JSON.parse(event.data)`. Dans `scripts.js`, une fois le Service Worker enregistré, déclarez le callback suivant:
 
 ```js
-navigator.serviceWorker.onMessage = event => {
+navigator.serviceWorker.onmessage = event => {
 	const message = JSON.parse(event.data);
-	if(message.type && message.type.includes("/api/users")){
-		console.log("Liste des participants à jour", message.data);
-	}
+	//TODO: détecter le type de message et actualiser l'affichage
 }
 ```
 
-Dans `scripts.js`, la fonction `renderAttendees` permet d'actualiser la liste des participants.
+La fonction `renderAttendees` permet d'actualiser la liste des participants. L'affichage sera donc mis à jour quand le Service Worker enverra le message avec les nouvelles données. Complétez le code ci-dessus en vérifiant si le message correspond à une mise à jour des participants, puis rappelez la fonction `renderAttendees` avec les données reçues dans le message.
 
-Complétez le code d'installation du Service Worker vu à l'étape 2 et 3 pour réagir à la réception d'un message du Service Worker. Si le message correspond à une mise à jour des participants, rappelez la fonction `renderAttendees` avec les données reçues dans le message.
+<Solution>
+```js
+navigator.serviceWorker.onmessage = event => {
+	const message = JSON.parse(event.data);
+	if(message && message.type.includes("/api/users")){
+		console.log("Liste des participants à jour", message.data)
+		renderAttendees(message.data)
+	}
+}
+```
+</Solution>
 
 ## Test de bon fonctionnement
 
-Pour tester le bon fonctionnement de la stratégie de chargement, nous allons simuler l'ajout de nouveaux participants. Le nombre de participants est déterminé par la variable `nbAttendees` dans `scripts.js`. Cette variable est transmise en paramètre à l'API de mockup.
+Pour tester le bon fonctionnement de la stratégie de chargement, puisque l'application utilise pour le moment une API mockup avec de fausses données, nous allons simuler des changements dans le nombre de participants et ajouter une fausse latence réseau pour nous laisser le temps d'observer la stratégie en action.
 
-Retirez le fichier `scripts.js` du precaching et assurez-vous que le Service Worker est bien actualisé et réinstallé (dans les Developer Tools, onglet Application > Service Workers, cochez la case *Update on reload*, voir étape 2). Puis allez sur l'onglet *Network* ajoutez une fausse latence réseau:
+Modifiez la fonction `update` dans `sw.js` comme ceci:
 
-![Ajout d'une fausse latence réseau 1/2](./readme_assets/chrome_throttling.png)
+```js
+const delay = ms => _ => new Promise(resolve => setTimeout(() => resolve(_), ms))
 
-![Ajout d'une fausse latence réseau 2/2](./readme_assets/chrome_throttling_2.png)
+function update(request) {
+	// mockup: on charge au hasard entre 1 et 10 participants
+	return fetch(request.url + `?per_page=${Math.ceil(Math.random() * 10)}`)
+	.then(delay(3000)) // on ajoute une fausse latence de 3 secondes
+	.then(response => {		
+		(...)
+		
+```
 
-Enfin, changez la variable `nbAttendees` dans `scripts.js` et actualisez la page. Une latence de 3 secondes vous laissera le temps de voir le premier affichage (version cache) puis le rafraichissement et l'ajout des nouveaux participants à la réception des nouvelles données.
+Assurez-vous que le Service Worker est bien actualisé et réinstallé (dans les Developer Tools, onglet Application > Service Workers, cochez la case *Update on reload*, voir étape 2), puis rechargez la page. Vous devriez voir l'ancien nombre de participants, puis 3 secondes plus tard la liste se rafraîchir avec un nouveau nombre de participants.

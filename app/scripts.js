@@ -1,19 +1,16 @@
 const API_ROOT = "https://reqres.in/api/";
-const api = name => API_ROOT + name;
-
-let nbAttendees = 10,
-    nbMaxAttendees = 30;
+const nbMaxAttendees = 30;
 
 function fetchAttendees(){
-	return fetch(api(`users?per_page=${nbAttendees}`))
+	return fetch(API_ROOT + `users`)
 		.then(res => res.json())
 		.then(res => res.data || [])
 }
 
-function renderAttendees(attendees){
-	const section = document.getElementById("attendees");
-	section.innerHTML = `
-	<h1>Attendees: ${nbAttendees} / ${nbMaxAttendees}</h1>
+function renderAttendees(attendees=[]){
+	const attendeesSection = document.getElementById("attendees");
+	attendeesSection.innerHTML = `
+	<h1>Attendees: ${attendees.length}</h1>
 	<ul>
 		${attendees.map(user => `
 		<li class='card'>
@@ -27,20 +24,17 @@ function renderAttendees(attendees){
 		`).join('')}
 	</ul>
 	`
-	updateRegisterForm();
-}
 
-function updateRegisterForm(){
-	const section = document.getElementById("register");
-	const isFull = (nbAttendees >= nbMaxAttendees);
-	section.querySelectorAll("input, button").forEach(elm => { elm.disabled = isFull });
-	section.querySelector(".status").innerHTML = isFull
+	const registerSection = document.getElementById("register");
+	const isFull = (attendees.length >= nbMaxAttendees);
+	registerSection.querySelectorAll("input, button").forEach(elm => { elm.disabled = isFull });
+	registerSection.querySelector(".status").innerHTML = isFull
 		? `Sorry, this event is full.`
 		: `Some places are still available for you to register for this event.`
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	fetchAttendees().then(attendees => renderAttendees(attendees));
+	fetchAttendees().then(renderAttendees);
 
 	//TODO: Etape 2 - Installation du Service Worker au chargement du document
 

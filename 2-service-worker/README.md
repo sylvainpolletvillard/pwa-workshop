@@ -26,10 +26,10 @@ Avant d'utiliser un Service Worker, il faut le faire enregistrer par l'applicati
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('/sw.js')
-    .then(function(serviceWorker) {
+    .then(serviceWorker => {
       console.log('Service Worker registered: ' + serviceWorker);
     })
-    .catch(function(error) {
+    .catch(error => {
       console.log('Error registering the Service Worker: ' + error);
     });
 }
@@ -56,11 +56,11 @@ Quand on enregistre un Service Worker, son cycle de vie démarre. Le schéma sui
 Les premières étapes sont l'installation et l'activation. Vérifions cela en ajoutant le code suivant dans le fichier _sw.js_.
 
 ```js
-self.addEventListener('install', function(event) {
+self.addEventListener('install', event => {
   console.log('Service Worker installing.');
 });
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', event => {
   console.log('Service Worker activating.');
 });
 ```
@@ -89,7 +89,7 @@ Quand on rafraîchit la page sans modifier le Service Worker, on remarque qu'on 
 On peut comprendre qu'il est nécessaire de gérer en production la montée en version des Service Workers. En développement, on peut s'en passer en cochant la case **Update on reload**. Cette option permet d'activer immédiatement les futurs nouveaux Service Workers. C'est un équivalent d'un clic automatique sur **skipWaiting** à chaque fois.
 
 ::: tip Note
-Pensez à activer l'option **Update on reload** lorsque vous travaillez sur le code d'un Service Worker 
+Activez l'option **Update on reload** lorsque vous travaillez sur le code d'un Service Worker pour toujours disposer de la dernière version. Attention toutefois, cette option installera et activera le Service Worker **avant** d'afficher la page, ce qui ne vous permettra pas de voir les logs associés à ces évènements en console. 
 :::
 
 Dans cette partie, nous avons vu comment installer un Service Worker. On a également géré deux évènements du cycle de vie du Service Worker: **install** et **activate**. Nous allons maintenant voir comment faire quelque-chose d'utile avec ce Service Worker.

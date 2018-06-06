@@ -21,16 +21,20 @@ Nous allons mettre en cache les fichiers statiques essentiels de l'application, 
 
 1. Placez-vous dans `sw.js` dans le callback de l'événement `install` vu à l'étape 2.
 2. Ouvrez le cache avec [`caches.open('V1')`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/open), qui retourne une promesse résolue avec l'objet `cache`. Le numéro de version dans le nom du cache nous sera utile pour les mises à jour ultérieures.
-3. Une fois le cache ouvert, ajoutez ensuite les fichiers statiques `index.html`, `styles.css` et `scripts.js` au cache avec [`cache.addAll(['url1','url2',...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll).
+3. Une fois le cache ouvert, ajoutez au cache avec [`cache.addAll(['url1','url2',...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll) les URL vers les fichiers statiques essentiels de notre application: la page HTML racine, le fichier `styles.css` et le fichier `scripts.js`.
+4. Afin que le Service Worker s'active une fois le precaching terminé, passez la `Promise` retournée par `cache.addAll` en argument à [`event.waitUntil()`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil), `event` était l'évènement d'installation. 
 
 <Solution>
 ```js
 const CACHE_NAME = 'V1';
-const STATIC_FILES = ['index.html', 'styles.css', 'scripts.js'];
+const STATIC_CACHE_URLS = ['/', 'styles.css', 'scripts.js'];
 
 self.addEventListener('install', event => {
   console.log('Service Worker installing.');
-  caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_FILES))
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+    .then(cache => cache.addAll(STATIC_CACHE_URLS))  
+  )
 });
 ```
 </Solution>
@@ -57,12 +61,12 @@ Nous voulons changer le comportement par défaut et retourner les versions préa
 1. Ajoutez un callback pour l'événement `fetch`, de la même façon que vous l'avez fait pour `install` à l'étape précédente.
 2. Appelez la méthode `caches.match(event.request)` pour chercher dans le cache une éventuelle réponse mise en cache pour la requête correspondante.
 3. Si aucune entrée dans le cache n'est trouvée, la promesse est résolue avec la valeur `undefined`. Dans ce cas, il faut requêter le réseau et retourner `fetch(event.request)` à la place.
-4. Il ne reste plus qu'à retourner cette promesse de réponse à la requête en la passant en argument à `event.responseWith()` 
+4. Il ne reste plus qu'à retourner cette promesse de réponse à la requête en la passant en argument à `event.respondWith()` 
 
 <Solution>
 ```js
 self.addEventListener('fetch', event => {
-  // Personnalisation de la réponse
+  // Stratégie Cache-First
   event.respondWith(
     caches.match(event.request) // On vérifie si la requête a déjà été mise en cache
     .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
@@ -73,7 +77,7 @@ self.addEventListener('fetch', event => {
 
 ## Test de fonctionnement offline
 
-Si tout a été fait correctement, vous devriez désormais pouvoir tester l'application en mode offline. Dans Developer Tools > Application > Service Workers, cochez la case *Offline* et décochez la case **Update on reload**, car on ne pourra pas recharger le Service Worker une fois offline. Enfin, rechargez l'application. La page en cache devrait alors s'afficher, mais la liste de participants ne se charge plus. Nous allons y remédier à l'étape suivante.
+Si tout a été fait correctement, vous devriez désormais pouvoir tester l'application en mode offline. Coupez votre serveur local et essayez de recharger l'application. La page en cache devrait alors s'afficher.
 
 ## Mise à jour du cache statique
 
@@ -85,7 +89,8 @@ Pour gérer ce problème, une solution est de passer par un nouveau cache avec u
 
 1. Dans le callback de l'événement `install`, changez le nom du cache en `V2`
 2. Dans le callback de l'événement `activate`, supprimez l'ancien cache avec `caches.delete('V1')`
-3. Améliorez votre code de nettoyage des anciens caches en supprimant tous les caches qui ne font pas partie de votre liste de caches connus et utilisés. Vous pouvez parcourir tous les caches existants avec la méthode `caches.keys()`
+3. Passez la `Promise` retournée par `caches.delete` dans `event.waitUntil` afin d'attendre la suppression du cache avant la fin de l'étape d'activation
+4. *(facultatif)* - Améliorez votre code de nettoyage des anciens caches en supprimant tous les caches qui ne font pas partie de votre liste de caches connus et utilisés. Vous pouvez parcourir tous les caches existants avec la méthode `caches.keys()`
 
 <Solution>
 ```js
@@ -105,25 +110,23 @@ self.addEventListener('activate', event => {
 ```
 </Solution>
 
-[Plus d'informations sur la mise à jour d'un Service Worker](https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#updates).
-
 ## Installation de la PWA
 
-Selon le navigateur et l'OS, les conditions techniques requises pour pouvoir installer la PWA sur le système varient. Il est possible que vous ayez déjà pu installer la PWA  avant d'arriver à cette étape. Mais en principe, si vous avez un manifeste et un Service Worker actif gérant les requêtes entrantes avec `fetch`, alors vous pourrez installer la PWA sur toutes les plates-formes supportées, qui mettront à profit le manifeste et le Service Worker.
+Selon le navigateur et l'OS, les conditions techniques requises pour pouvoir installer la PWA sur le système varient. Mais en principe, si vous avez un manifeste et un Service Worker actif gérant les requêtes entrantes avec `fetch`, alors vous pouvez actuellement installer cette PWA sur toutes les plates-formes supportées, et elles mettront à profit le manifeste et le Service Worker.
 
 L'installation de PWA est supportée sur Chrome OS mais encore expérimentale sur les autres systèmes avec Chrome. Vous pouvez activer l'installation de PWA avec Chrome sur Windows en activant ce flag: **chrome://flags/#enable-pwa-full-code-cache** ; mais le support est encore incomplet.
 
 La plate-forme ayant la meilleure intégration ce jour est **Android**. Si vous disposez d'un smartphone Android pouvant requêter votre serveur suite à un partage de connexion, essayez de charger l'application via Chrome for Android. Une fois la page web ouverte, le menu de Chrome devrait comporter l'option: **Add to home screen**
 
-![Add to home screen](./readme_assets/pwa_install_menu.jpg 'dd to home screen')
+![Add to home screen](./readme_assets/pwa_install_menu.jpg)
 
 Poursuivre l'installation. Un nouveau raccourci devrait apparaitre dans l'écran d'accueil du smartphone. C'est le raccourci vers notre PWA !
 
-![PWA bookmark](./readme_assets/pwa_install.jpg 'PWA bookmark')
-![Splash-screen](./readme_assets/splash-screen.jpg 'Splash-screen')
+![PWA bookmark](./readme_assets/pwa_install.jpg)
+![Splash-screen](./readme_assets/splash-screen.jpg)
 
 Une fois la PWA installée, quand on clique sur le raccourci, un splash screen est affiché brièvement. Celui-ci reprend les couleurs et l'icône spécifiée dans le manifeste.
 
 Vous remarquerez que la barre d'adresse et le reste de l'interface du navigateur ne sont plus présentes, si vous avez configuré la propriété `display` correctement dans le manifeste.
 
-![PWA run from bookmark](./readme_assets/pwa-fullscreen.jpg 'PWA run from bookmark')
+![PWA run from bookmark](./readme_assets/pwa-fullscreen.jpg)
