@@ -2,6 +2,7 @@ module.exports = {
 	title: 'PWA Workshop',
 	description: "Introduction aux Progressive Web Applications",
 	base: '/',
+	serviceWorker: true,
 	themeConfig: {
 		sidebar: [
 			'/',
