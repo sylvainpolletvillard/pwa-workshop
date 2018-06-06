@@ -129,7 +129,7 @@ Il ne reste plus qu'à assembler les 3 blocs `cache`, `update` et `refresh` pour
 ```js
 if(event.request.url.includes("/api/")){
     // réponse aux requêtes API, stratégie Cache Update Refresh
-    event.respondWith(caches.match("api"))
+    event.respondWith(caches.match(event.request))
     event.waitUntil(update(event.request).then(refresh))
 }
 ```

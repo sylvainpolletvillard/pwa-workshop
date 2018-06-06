@@ -41,6 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		.register('/sw.js')
 		.then(serviceWorker => {
 			console.log('Service Worker registered: ' + serviceWorker);
+
+			navigator.serviceWorker.onmessage = event => {
+				const message = JSON.parse(event.data);
+				if(message && message.type.includes("/api/users")){
+					console.log("Liste des participants à jour", message.data)
+					renderAttendees(message.data)
+				}
+			}
 		})
 		.catch(error => {
 			console.log('Error registering the Service Worker: ' + error);
