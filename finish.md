@@ -11,10 +11,14 @@ Vous connaissez désormais les bases techniques d'une Progressive Web App, mais 
 
 Voici quelques exercices supplémentaires que vous pouvez essayer de réaliser à partir des connaissances acquises dans ce workshop :
 
-- remplacer les images des articles non mises en cache par `assets/img/fallback.jpg` quand la requête réseau échoue
+- remplacer les images des participants non mises en cache par une image par défaut `fallback.jpg` quand la requête réseau échoue
 - ajouter un temps d'expiration au cache des requêtes GET de l'API
-- permettre à l'utilisateur d'activer/désactiver la synchronisation en arrière-plan via une case à cocher dans l'application
+- redemander automatiquement une synchronisation en arrière-plan 1 minute après la précédente
 
 ## Un support de documentation complet sur les PWA
 
 Retrouvez une documentation complète et en français sur la conception de Progressive Web Apps ici : [pwa-cookbook.js.org](http://pwa-cookbook.js.org)
+
+## Une remarque, correction, suggestion ?
+
+Tous nos supports sont disponibles sur [**Github**](https://github.com/sylvainpolletvillard/pwa-workshop) et ouverts aux contributions externes via les *Pull Requests*.

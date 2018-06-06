@@ -5,7 +5,7 @@ lang: fr
 
 # Etape 5 : Background sync et notifications
 
-Pour conclure ce workshop, nous allons mettre à profit le Service Worker et une nouvelle API, **Background Sync** ,pour mettre à jour la liste des participants en tâche de fond et notifier l'utilisateur lorsqu'il y a des nouveaux participants.
+Pour conclure ce workshop, nous allons mettre à profit le Service Worker et une nouvelle API, **Background Sync**, pour mettre à jour la liste des participants en tâche de fond et notifier l'utilisateur lorsqu'il y a des nouveaux participants.
 
 ::: danger Non standard
 L'API Background Sync n'est pas encore standardisée. La [spécification](https://wicg.github.io/BackgroundSync/spec/) est toujours à l'étude. Elle est déjà implémentée sur Chrome et Android depuis 2016, et en cours de développement sur Edge et Firefox. Cette API distingue deux types de synchronisation: *One-Time* et *Périodique*. Actuellement, seule la synchronisation **One-Time** est implémentée dans Chrome, et il peut y avoir quelques bugs d'implémentation.
