@@ -17,5 +17,8 @@
         "url": "https://github.com/sylvainpolletvillard/pwa-workshop/issues"
     },
     "homepage": "https://github.com/sylvainpolletvillard/pwa-workshop#readme",
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "vuepress": "^0.10.1"
+    }
 }
