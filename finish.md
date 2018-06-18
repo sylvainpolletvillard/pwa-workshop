@@ -1,24 +1,24 @@
 ---
-title: Pour aller plus loin
-lang: fr
+title: To go further
+lang: en
 ---
 
-# Terminé ? Félicitations ! 🎉
+# Finished ? Congratulations ! 🎉
 
-Vous connaissez désormais les bases techniques d'une Progressive Web App, mais il vous reste encore beaucoup de choses à découvrir !
+You now know the basics of a Progressive Web App, but you still have a lot to discover!
 
-## Exercices supplémentaires
+## Additional exercises
 
-Voici quelques exercices supplémentaires que vous pouvez essayer de réaliser à partir des connaissances acquises dans ce workshop :
+Here are some additional exercises that you can try to achieve from the knowledge gained in this workshop:
 
-- remplacer les images des participants non mises en cache par une image par défaut `fallback.jpg` quand la requête réseau échoue
-- ajouter un temps d'expiration au cache des requêtes GET de l'API
-- redemander automatiquement une synchronisation en arrière-plan 1 minute après la précédente
+- replace images of non-cached attendees with a `fallback.jpg` default image when the network request fails
+- add an expiration time to the API GET request cache
+- automatically request a background sync 1 minute after the previous one
 
-## Un support de documentation complet sur les PWA
+## A comprehensive documentation on PWA
 
-Retrouvez une documentation complète et en français sur la conception de Progressive Web Apps ici : [pwa-cookbook.js.org](http://pwa-cookbook.js.org)
+Find a complete documentation about Progressive Web Apps here: [pwa-cookbook.js.org](http://pwa-cookbook.js.org)
 
-## Une remarque, correction, suggestion ?
+## Remark, correction, suggestion?
 
-Tous nos supports sont disponibles sur [**Github**](https://github.com/sylvainpolletvillard/pwa-workshop) et ouverts aux contributions externes via les *Pull Requests*.
+All of our materials are available at [**Github**](https://github.com/sylvainpolletvillard/pwa-workshop) and open to external contributions via * Pull Requests *.
