@@ -11,31 +11,30 @@ next: ./1-manifest/
 
 # Introduction
 
-Le terme Progressive Web App (PWA) n'a sans doute pas échappé à toute personne qui suit l'actualité web. À quoi correspond ce terme et qu'apporte t-il à une application web ? Ce Codelab vous permettra de mieux comprendre les PWA avec un peu de pratique 💪.
+You may have heard about Progressive Web Apps (PWA) in the latest web trends. What is it all about and how do they improve classic web applications ? This workshop will let you understand PWA better with a bit of practice 💪.
 
-Nous allons ensemble transformer une application web classique en une PWA. Cela permettra à l'utilisateur de disposer d'un mode offline basique pour consulter l'application et de pouvoir l'ajouter en raccourci sur l'écran d'accueil de son smartphone.
+We will transform together a classic web application into a PWA. This will enable the user to have a basic offline mode, and to install the app on his smartphone with a shortcut on the homescreen.
 
-# Prérequis
+# Requirements
 
-- Connaître les bases du HTML, CSS et JavaScript.
-- Un poste de travail muni d'un **éditeur de code** tel que [Visual Studio Code](https://code.visualstudio.com/)
-- **Google Chrome** (*les PWA sont supportées par la plupart des navigateurs mais pour faciliter l'organisation, nous utiliserons tous le même navigateur pendant le développement*)
-- Un **serveur web local** (si vous n'en avez pas, essayez [npmjs.com/serve](http://npmjs.com/serve) et la commande `cd app && serve`
+- Basic knowledge of HTML, CSS and JavaScript. Understanding Promises and asynchronicity in JS can be a plus.
+- A computer with a **code editor** such as [Visual Studio Code](https://code.visualstudio.com/)
+- **Google Chrome** (*PWA are supported on most browsers but to facilitate the organisation, we will all use the same browser during development*)
+- A **local web server** (if you don't have any, try [npmjs.com/serve](http://npmjs.com/serve) with `cd app && serve`)
 
-# Préparation
-- [Clôner ou télécharger la web app d'exemple](https://github.com/sylvainpolletvillard/pwa-workshop.git) qui se trouve dans le dossier [app](https://github.com/sylvainpolletvillard/pwa-workshop/tree/master/app) de ce repo.
-- Ouvrir le dossier `app` dans votre éditeur de code.
-- Configurer votre serveur local pour servir le dossier `app`.
-- Charger la page `app/index.html` sur Google Chrome. Une liste de participants devrait s'afficher.
+# Preparation
+- [Clone or download the example web app](https://github.com/sylvainpolletvillard/pwa-workshop.git) which is located in the [app folder](https://github.com/sylvainpolletvillard/pwa-workshop/tree/master/app) of this repo.
+- Open the `app` folder in your code editor.
+- Configure your local server to serve the `app` folder.
+- Load the `app/index.html` page on Google Chrome. A list of attendees should be displayed.
 
+# Steps of the workshop
 
-# Etapes du workshop
-
-1. Ajout d'un manifeste d'application web
-2. Installation et activation d'un Service Worker
-3. Precaching des assets statiques pour un mode offline basique
-4. Stratégie de Cache/Update/Refresh pour les requêtes GET de l'API
-5. Background sync et exemple de notification push
+1. Add a web application manifest
+2. Install and activate a Service Worker
+3. Precaching of static assets for a basic offline mode
+4. Cache/Update/Refresh Strategy for the API GET requests
+5. Background sync and examples of push notifications
 
 
 
