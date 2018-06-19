@@ -43,7 +43,7 @@ self.addEventListener('fetch', event => {
     	// réponse aux requêtes API, stratégie Cache Update Refresh
     } else {
         // réponse aux requêtes de fichiers statiques, stratégie Cache-First
-    }    
+    }
 })
 ```
 
@@ -76,7 +76,7 @@ function update(request) {
 		// on peut mettre en cache la réponse
 		return caches.open(CACHE_NAME)
 		.then(cache => cache.put(request, response.clone()))
-		.then(() => response) // résout la promesse avec l'objet Response		
+		.then(() => response) // résout la promesse avec l'objet Response
 	})	
 }
 ```

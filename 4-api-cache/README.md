@@ -1,62 +1,62 @@
 ---
-title: 4. Stratégie de Cache pour API REST
-lang: fr
+title: 4. Cache Strategy for REST API
+lang: en
 ---
 
-# Etape 4: Stratégie de Cache/Update/Refresh pour les requêtes GET de l'API REST
+# Step 4: Cache / Update / Refresh strategy for GET requests from the REST API
 
-Nous avons vu à l'étape précédente comment mettre en cache des fichiers statiques. La stratégie que nous avons mis en place pour ces fichiers est dite *Cache-First*, c'est-à-dire qu'on servira toujours la version en cache en priorité. Qu'en est-il des données dynamiques, typiquement des réponses d'API ?
+We saw in the previous step how to cache static files. The strategy we have put in place for these files is called *Cache-First*, that is, always return the cached version if available. What about dynamic data, typically API responses?
 
-Pour les besoins du mode offline, il nous faut également mettre ces données dans un cache local. En revanche, contrairement aux fichiers statiques, il est important pour l'utilisateur de disposer des données les plus récentes (les plus "fraîches"), et ce le plus tôt possible. Il nous faut donc changer de stratégie.
+For the purposes of offline mode, we must also put this data in a local cache. On the other hand, unlike static files, it is important for the user to have the most recent data (the "coolest") as soon as possible. So we have to change strategy.
 
 ## Cache, Update, Refresh
 
-Cette stratégie de cache est légèrement plus complexe mais permet d'utiliser le cache local pour accélérer considérablement le temps de premier chargement, quitte à afficher temporairement des données non à jour.
+This cache strategy is slightly more complex but allows the use of the local cache to significantly speed up the first loading time, even if temporarily displaying data that is out of date.
 
-Pour chaque requête, le service Worker va dans un premier temps retourner immédiatement une réponse en cache si elle existe, puis en parallèle requêter le réseau. A la réception de la réponse depuis le réseau, l'entrée en cache sera mise à jour et l'interface utilisateur sera mise à jour automatiquement.
+For each request, the Worker service will first immediately return a cached response if it exists, and then in parallel query the network. Upon receiving the response from the network, the cached entry will be updated and the user interface will be updated automatically.
 
-Ce rafraichissement de l'interface peut se concrétiser de différentes manières selon les cas. On peut simplement ajouter dynamiquement des éléments à une liste, comme des messages dans une conversation instantanée par exemple. Ou alors notifier l'utilisateur d'une autre manière, par exemple avec un lien proposant de charger le nouveau contenu disponible.
+Refreshing the interface can be done in different ways depending on your use case. You can simply add items dynamically to a list, like messages in an instant conversation for example. Or notify the user in another way, for example with a link proposing to load the new content available.
 
-![Schema de fonctionnement](./readme_assets/schema.png)
+![Flowsheet](./readme_assets/schema.png)
 
-Avantages:
+Advantages:
 
-- Chargement instantané si une réponse est en cache
-- Peut aider à dynamiser l'expérience utilisateur
+- Instant load if a response is cached
+- Can improve the user experience
 
-Inconvénients:
+Disadvantages:
 
-- L'utilisateur ne doit pas pouvoir être en mesure d'interagir avec des données en cours de rafraichissement
-- Le rafraichissement de l'interface à la réception de la réponse réseau peut gêner l'utilisateur si l'UX n'est pas bien pensée
+- The user must not be able to interact with out-to-date data
+- Refreshing the interface after network response can disturb the user if UX is not well thought out
 
-## Implémentation
+## Implementation
 
-Nous allons pour notre application implémenter cette stratégie de *Cache, Update, Refresh* pour le chargement de la liste des participants au workshop. Cette liste va probablement peu évoluer entre chaque chargement et la plupart des évolutions successives consisteront en un ajout de un ou plusieurs autres participants. Le rafraichissement à l'écran devrait donc être naturel pour l'utilisateur. Cette stratégie semble donc la plus adaptée dans le cas présent.
+For our application, we will implement this *Cache, Update, Refresh* strategy to load the list of workshop attendees. This list will probably change a little between each request and most of the successive changes will be the addition of a few attendees. Refreshing the view should therefore be quite natural for the user. This strategy seems to be the most appropriate in this case.
 
-### Choix de la stratégie selon la requête
+### Choosing the right strategy depending on the request
 
-Repartons du code du Service Worker, dans le callback d'événement `fetch`. Nous allons distinguer les requêtes vers notre API des requêtes statiques, afin d'appliquer une stratégie différente pour les données:
+Let's start again with the Service Worker code in the `fetch` event callback. We will distinguish requests to our API from requests to static files, in order to apply a different strategy:
 
 ```js
 self.addEventListener('fetch', event => {
     if(event.request.url.includes("/api/")){
-    	// réponse aux requêtes API, stratégie Cache Update Refresh
+    	// response to API requests, Cache Update Refresh strategy
     } else {
-        // réponse aux requêtes de fichiers statiques, stratégie Cache-First
-    }    
+        // response to static files requests, Cache-First strategy
+    }
 })
 ```
 
-Toutes nos requêtes vers l'API passent par le même endpoint contenant `/api/` dans l'URL. On peut donc facilement identifier ces requêtes en se basant sur l'URL accessible depuis `event.request.url`. Voici la [documentation de l'API FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent).
+All our requests to the API go through the same endpoint containing `/api/` in the URL. So, we can easily identify these requests based on the URL accessible from `event.request.url`. Here is the [FetchEvent API documentation] (https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent).
 
 ### 1. Cache
 
-La première étape est de répondre immédiatement avec la réponse en cache si elle existe. Vous pouvez pour cela réutiliser la fonction `caches.match` vu à l'étape 3 pour la réponse aux requêtes de ressources statiques.
+The first step is to respond immediately with the cached response if it exists. You can do this by reusing the `caches.match` function seen in step 3 to respons to static files requests.
 
 <Solution>
 ```js
 if (event.request.url.includes("/api/")) {
-    // réponse aux requêtes API, stratégie Cache Update Refresh
+    // response to API requests, Cache Update Refresh strategy
     event.respondWith(caches.match(event.request))
     //TODO: update et refresh
 }
@@ -65,32 +65,32 @@ if (event.request.url.includes("/api/")) {
 
 ### 2. Update
 
-En parallèle, la requête au réseau doit également être faite avec la méthode `fetch(request)`, puis on met à jour le cache avec la réponse via la méthode `cache.put`. Déclarez la fonction `update` ci-dessous dans le code du Service Worker:
+In parallel, the request to the network also has be made with the `fetch(request)` method, then we update the cache with the response via the `cache.put` method. Declare the `update` function below in the Service Worker code:
 
 ```js
 function update(request) {
 	return fetch(request.url)
-	.then(response => {		
+	.then(response => {
 		if (!response.ok) { throw new Error('Network error'); }
 
-		// on peut mettre en cache la réponse
+		// we can put response in cache
 		return caches.open(CACHE_NAME)
 		.then(cache => cache.put(request, response.clone()))
-		.then(() => response) // résout la promesse avec l'objet Response		
-	})	
+		.then(() => response) // resolve promise with the Response object
+	})
 }
 ```
 
-::: warning Attention
-Une réponse ne peut être lue qu'une seule fois, elle doit donc être clonée avec la méthode `.clone()` avant de la stocker en cache.
+::: warning Warning
+An answer can only be read once, so it must be cloned with the `.clone()` method before caching it.
 :::
 
-Ensuite, appelez cette fonction `update` dans le callback de `fetch` en parallèle de la réponse avec la version en cache. Vous pouvez tout à fait continuer à utiliser l'objet `event` dans la suite du code même après un premier `event.respondWith`. Cependant, vous devrez alors utiliser la méthode `event.waitUntil()` pour étendre la durée de vie de l'événement et indiquer au navigateur que d'autres tâches doivent être effectuées au delà de la réponse initiale.
+Then, call this `update` function in the` fetch` callback in parallel with the response with the cached version. You can still continue to use the `event` object in the following code even after a first `event.respondWith`. However, you will need to use the `event.waitUntil()` method to extend the life of the event and tell the browser that more work needs to be done beyond the initial response.
 
 <Solution>
 ```js
 if (event.request.url.includes("/api/")) {
-    // réponse aux requêtes API, stratégie Cache Update Refresh
+    // response to API requests, Cache Update Refresh strategy
     event.respondWith(caches.match(event.request))
     event.waitUntil(update(event.request)) //TODO: refresh
 }
@@ -99,83 +99,82 @@ if (event.request.url.includes("/api/")) {
 
 ### 3. Refresh
 
-Si le réseau a répondu et que la réponse a été mise en cache, on souhaite indiquer à l'application que de nouvelles données sont disponibles afin d'actualiser l'affichage.
+If the network has responded and the response has been cached, you want to tell the application that new data is available to refresh the application view.
 
-Les applications ayant un Service Worker inscrit et installé sont appelés "clients" au regard de ce Service Worker, et sont accessibles via [l'API `Clients` documentée ici](https://developer.mozilla.org/en-US/docs/Web/API/Clients). Le Service Worker communique avec le client par le biais de la méthode `client.postMessage`. Le format d'échange est textuel, vous devrez donc sérialiser vos données en JSON. Le message transmis sera un objet constitué a minima d'une propriété pour identifier le type de message (ici on a choisi l'URL de la requête correspondante) et d'une autre propriété contenant les données à transmettre (le contenu de la réponse).
+Applications with a registered and installed Service Worker are referred to as "clients" for this Service Worker, and can be accessed through the [Clients API documented here](https://developer.mozilla.org/en-US/docs/web/API/Clients). The Service Worker communicates with the client through the `client.postMessage` method. The exchange format is textual, so you will need to serialize your data into JSON. The transmitted message will be an object composed with at least one property to identify the type of message (here we chose the URL of the corresponding request) and another property containing the data to be transmitted (the content of the response).
 
-Déclarez la fonction `refresh` ci-dessous dans le code du Service Worker. 
+Declare the `refresh` function below in the Service Worker code.
 
 ```js
 function refresh(response) {
-	return response.json() // lit et parse la réponse JSON
+	return response.json() // read and parse JSON response
 	.then(jsonResponse => {
 		self.clients.matchAll().then(clients => {
 			clients.forEach(client => {
-				// signaler et envoyer au client les nouvelles données
+				// report and send new data to client
 				client.postMessage(JSON.stringify({
                     type: response.url,
                     data: jsonResponse.data
                 }))
 			})
 		})
-		return jsonResponse.data; // résout la promesse avec les nouvelles données
+		return jsonResponse.data; // resolve promise with new data
 	})
 }
 ```
 
-Il ne reste plus qu'à assembler les 3 blocs `cache`, `update` et `refresh` pour établir la stratégie: la réponse du cache avec un `event.respondWith`, puis en parallèle l'update suivi du refresh dans un `event.waitUntil`. La fonction `update` retourne une `Promise` résolue avec la réponse réseau, vous pouvez donc la chaîner avec `.then()` pour exécuter une autre fonction à la suite d'une réponse réseau.
+All that remains is to assemble the 3 `cache`, `update` and `refresh` blocks to finalize the strategy: the cache response with `event.respondWith`, then in parallel the update followed by the refresh in a `event.waitUntil`. The `update` function returns a` Promise` resolved with the network response, so you can chain it with `.then()` to execute another function after the network response.
 
 <Solution>
 ```js
 if(event.request.url.includes("/api/")){
-    // réponse aux requêtes API, stratégie Cache Update Refresh
+    // response to API requests, Cache Update Refresh strategy
     event.respondWith(caches.match(event.request))
     event.waitUntil(update(event.request).then(refresh))
 }
 ```
 </Solution>
 
-## Rafraîchissement côté applicatif
+## Refreshing the view
 
-Le client peut écouter les messages émis par le Service Worker via le callback `navigator.serviceWorker.onmessage`. Vous pouvez ensuite désérialiser le message avec `JSON.parse(event.data)`. Dans `scripts.js`, une fois le Service Worker enregistré, déclarez le callback suivant:
+The client can listen to messages emitted by the Service Worker via the `navigator.serviceWorker.onmessage` callback. Then you can deserialize the message with `JSON.parse(event.data)`. In `scripts.js`, once the Service Worker is registered, declare the following callback:
 
 ```js
 navigator.serviceWorker.onmessage = event => {
 	const message = JSON.parse(event.data);
-	//TODO: détecter le type de message et actualiser l'affichage
+	//TODO: detect the type of message and refresh the view
 }
 ```
 
-La fonction `renderAttendees` permet d'actualiser la liste des participants. L'affichage sera donc mis à jour quand le Service Worker enverra le message avec les nouvelles données. Complétez le code ci-dessus en vérifiant si le message correspond à une mise à jour des participants, puis rappelez la fonction `renderAttendees` avec les données reçues dans le message.
+The `renderAttendees` function allows you to update the list of attendees. The view will be updated when the Service Worker sends the message with the new data. Complete the code above, checking if the message is an update of the attendees list, then recall the `renderAttendees` function with the data received in the message.
 
 <Solution>
 ```js
 navigator.serviceWorker.onmessage = event => {
 	const message = JSON.parse(event.data);
 	if(message && message.type.includes("/api/users")){
-		console.log("Liste des participants à jour", message.data)
+		console.log("List of attendees to date", message.data)
 		renderAttendees(message.data)
 	}
 }
 ```
 </Solution>
 
-## Test de bon fonctionnement
+## Testing
 
-Pour tester le bon fonctionnement de la stratégie de chargement, puisque l'application utilise pour le moment une API mockup avec de fausses données, nous allons simuler des changements dans le nombre de participants et ajouter une fausse latence réseau pour nous laisser le temps d'observer la stratégie en action.
+To test if the loading strategy works properly, since the application currently uses a mockup API with false data, we will simulate changes in the number of attendees and add a false network latency to give us the time to observe the strategy in action.
 
-Modifiez la fonction `update` dans `sw.js` comme ceci:
+Change the `update` function in` sw.js` like this:
 
 ```js
 const delay = ms => _ => new Promise(resolve => setTimeout(() => resolve(_), ms))
 
 function update(request) {
-	// mockup: on charge au hasard entre 1 et 10 participants
+	// mockup: load randomly between 1 and 10 attendees
 	return fetch(request.url + `?per_page=${Math.ceil(Math.random() * 10)}`)
-	.then(delay(3000)) // on ajoute une fausse latence de 3 secondes
-	.then(response => {		
+	.then(delay(3000)) // add a fake latency of 3 seconds
+	.then(response => {
 		(...)
-		
 ```
 
-Assurez-vous que le Service Worker est bien actualisé et réinstallé (dans les Developer Tools, onglet Application > Service Workers, cochez la case *Update on reload*, voir étape 2), puis rechargez la page. Vous devriez voir l'ancien nombre de participants, puis 3 secondes plus tard la liste se rafraîchir avec un nouveau nombre de participants.
+Make sure the Service Worker is up-to-date and reinstalled (in the Developer Tools, Application> Service Workers tab, check the *Update on reload* check box, see step 2), then reload the page. You should see the old number of attendees, then 3 seconds later the list will refresh with a new number of attendees.
