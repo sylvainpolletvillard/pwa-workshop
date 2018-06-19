@@ -7,7 +7,7 @@ lang: en
 
 We saw in the previous step how to cache static files. The strategy we have put in place for these files is called *Cache-First*, that is, always return the cached version if available. What about dynamic data, typically API responses?
 
-For the purposes of offline mode, we must also put this data in a local cache. On the other hand, unlike static files, it is important for the user to have the most recent data (the "coolest") as soon as possible. So we have to change strategy.
+To have an offline mode, we also need to put this data in a local cache. On the other hand, unlike static files, it is important for the user to have the most recent data (the "freshest") as soon as possible. So we have to change our strategy.
 
 ## Cache, Update, Refresh
 
@@ -47,7 +47,7 @@ self.addEventListener('fetch', event => {
 })
 ```
 
-All our requests to the API go through the same endpoint containing `/api/` in the URL. So, we can easily identify these requests based on the URL accessible from `event.request.url`. Here is the [FetchEvent API documentation] (https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent).
+All our requests to the API go through the same endpoint containing `/api/` in the URL. So, we can easily identify these requests based on the URL accessible from `event.request.url`. Here is the [FetchEvent API documentation](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent).
 
 ### 1. Cache
 
