@@ -1,33 +1,32 @@
 ---
-title: 5. Background sync et notifications
-lang: fr
+title: 5. Background sync and notifications
+lang: en
 ---
 
-# Etape 5 : Background sync et notifications
+# Step 5 : Background sync and notifications
 
-Pour conclure ce workshop, nous allons mettre à profit le Service Worker et une nouvelle API, **Background Sync**, pour mettre à jour la liste des participants en tâche de fond et notifier l'utilisateur lorsqu'il y a des nouveaux participants.
+To conclude this workshop, we will use the Service Worker and a new API, **Background Sync**, to update the list of attendees in the background and notify the user when there are new attendees.
 
-::: danger Non standard
-L'API Background Sync n'est pas encore standardisée. La [spécification](https://wicg.github.io/BackgroundSync/spec/) est toujours à l'étude. Elle est déjà implémentée sur Chrome et Android depuis 2016, et en cours de développement sur Edge et Firefox. Cette API distingue deux types de synchronisation: *One-Time* et *Périodique*. Actuellement, seule la synchronisation **One-Time** est implémentée dans Chrome, et il peut y avoir quelques bugs d'implémentation.
+::: danger Non-standard
+The Background Sync API is not yet standardized. The [specification] (https://wicg.github.io/BackgroundSync/spec/) is still under study. It has already been implemented on Chrome and Android since 2016, and is under development on Edge and Firefox. This API distinguishes two types of synchronization: * One-Time * and * Periodic *. Currently, only ** One-Time ** synchronization is implemented in Chrome, and there may be some implementation bugs.
 :::
 
-Concernant les notifications, L'API Push permet aux applications web de recevoir des notifications push poussées depuis un serveur, même lorsque l'application web n'est pas au premier plan et même lorsqu'elle n'est actuellement pas chargée sur l'agent utilisateur. Néanmoins, cela implique l’utilisation côté serveur d’un service de push tel que Google Cloud Messenger.
- 
-Dans le cadre de ce workshop, nous n'allons pas utiliser l'API Push mais l'**API Notification**. Cette API permet également d'envoyer des notifications sans nécessiter de partie serveur, mais requiert que le navigateur soit ouvert. Ces notifications sont multi-plateformes, elles s’adapteront donc à la plate-forme cible: notifications Android ou centre de notifications de Windows 10 par exemple.
+Regarding notifications, the Push API allows web applications to receive push notifications pushed from a server, even when the web application is not in the foreground and even when it is not currently loaded on the user system. Nevertheless, this implies the use of a server-side push service such as Google Cloud Messenger.
+ 
+During this workshop, we will not use the Push API but the **Notification API**. This API also allows you to send notifications without requiring a server part, but requires the browser to be open. These notifications are multi-platform, so they will adapt to the target platform: Android notifications or the notification center of Windows 10 for example.
 
 
+## Notifications and permissions
 
-## Notifications et permissions
+Synchronization in the background does not require special permissions, but posting notifications requires the user's consent. To avoid spam, browsers have added constraints to be able to request these permissions. For example, we can do this after a specific user action such as clicking on a link.
 
-La synchronisation en tâche de fond ne nécessite pas de permissions particulières, en revanche afficher des notifications requiert le consentement de l'utilisateur. Pour éviter le spam, les navigateurs ont ajouté des contraintes à respecter pour pouvoir demander ces permissions. On peut par exemple le faire suite à une action de l'utilisateur comme le clic sur un lien.
-
-Ajoutez donc le lien ci-dessous quelque-part dans la page `index.html` pour activer les notifications:
+So add this link below somewhere in the `index.html` page to enable notifications:
 
 ```html
 <a onclick="registerNotification()">Notify me when there are new attendees</a>
 ```
 
-Puis déclarez la fonction suivante dans `scripts.js`
+Then declare the following function in `scripts.js`
 
 ```js
 function registerNotification() {
@@ -38,13 +37,13 @@ function registerNotification() {
 }
 ```
 
-Lorsque l'utilisateur aura donné sa permission d'afficher des notifications, nous appellerons la fonction `registerBackgroundSync` pour mettre en place la synchronisation en arrière-plan.
+When the user has given permission to display notifications, we will call the `registerBackgroundSync` function to set up background synchronization.
 
-## Synchronisation en tâche de fond
+## Background Synchronization
 
-Le client doit explicitement s'inscrire aux tâches de synchronisation en tâche de fond. Pour ce faire, on commence par récupérer une référence à la `ServiceWorkerRegistration`, qui représente le lien d'enregistrement entre votre Service Worker et votre client. Le plus simple pour cela est d'utiliser [`navigator.serviceWorker.ready`](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/ready) qui retourne une `Promise` résolue avec la `ServiceWorkerRegistration` lorsque le Service Worker est installé et actif.
+The client must explicitly register for synchronization tasks in the background. To do this, we first retrieve a reference to the `ServiceWorkerRegistration`, which represents the registration link between your Service Worker and your client. The simplest way to do this is to use [`navigator.serviceWorker.ready`] (https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/ready) which returns a` Promise` resolved with the `ServiceWorkerRegistration` when the Service Worker is installed and running.
 
-Une fois l'objet `registration` de type `ServiceWorkerRegistration` récupéré, nous pouvons appeler la méthode `registration.sync.register` pour s'inscrire à une tâche de synchronisation One-Time en arrière-plan.
+Once the `registration` object of type `ServiceWorkerRegistration` is retrieved, we can call the `registration.sync.register` method to register for a One-Time synchronization task in the background.
 
 ```js
 function registerBackgroundSync() {
@@ -59,20 +58,20 @@ function registerBackgroundSync() {
 }
 ```
 
-Côté Service Worker, un évènement de type `sync` sera émis lorsque le système décide de déclencher une synchronisation. Cette décision se base sur différents paramètres: la connectivité, l'état de la batterie, la source d'alimentation etc. ; ainsi nous ne pouvons pas être sûrs du moment où la synchronisation est déclenchée. La spécification prévoit des possibilités de paramétrage à terme, mais pour le moment, tout ce que nous pouvons faire est attendre. Toutefois, dans les conditions du workshop, cela ne devrait prendre que quelques secondes.
+On the Service Worker side, a `sync` event will be emitted when the system decides to trigger a synchronization. This decision is based on various parameters: connectivity, battery status, power source, etc. ; so we can not be sure when synchronization will be triggered. The specification is planning for future parameterization options, but for now, all we can do is wait. However, under the conditions of this workshop, this should only take a few seconds.
 
 ```js
 self.addEventListener('sync', function(event) {
 	console.log("sync event", event);
     if (event.tag === 'syncAttendees') {
-        event.waitUntil(syncAttendees()); // on lance la requête de synchronisation
+        event.waitUntil(syncAttendees()); // sending sync request
     }
 });
 ```
 
-## Actualisation et notification
+## Update and notification
 
-La requête de synchronisation est similaire à l'`update` et `refresh` de l'étape 4, à la différence qu'elle est faite à la demande du système et non du client:
+The synchronization request is similar to the `update` and` refresh` at step 4, except that it is requested by the system and not the client:
 
 ```js
 function syncAttendees(){
@@ -84,14 +83,14 @@ function syncAttendees(){
 }
 ```
 
-Si le client dispose de la permission d'afficher des notifications, la méthode `self.registration.showNotification` devrait afficher une notification avec le texte désiré sur le client enregistré.
+If the client has permission to view notifications, the `self.registration.showNotification` method should display a notification with the desired text on the registered client.
 
-## Test de bon fonctionnement
+## Testing
 
-::: warning Attention
-Comme pour les étapes précédentes, assurez-vous que la case **Update on reload** est cochée dans les Developer Tools afin de toujours recharger la dernière version du Service Worker.
+::: warning Warning
+As with the previous steps, make sure that the **Update on reload** box is checked in the Developer Tools to always reload the latest version of the Service Worker.
 :::
 
-Au clic sur le lien d'activation des notifications, une demande de permission devrait s'afficher. Après avoir accepté, vous devriez observer dans la console le log `Registered background sync`. Il ne vous reste plus qu'à attendre que le système déclenche une synchronisation et affiche la notification, ce qui devrait prendre quelques secondes, 1 minute tout au plus. Si l'application web est au premier plan, la liste des participants devrait également être actualisée grâce à la fonction `refresh` dans `syncAttendees`.
+When clicking on the notifications activation link, a request for permission should be displayed. After accepting, you should observe `Registered background sync` in the console. All you have to do is wait until the system triggers a synchronization and displays the notification, which should take a few seconds, 1 minute at most. If the web application is in the foreground, the list of participants should also be updated with the `refresh` function in` syncAttendees`.
 
-Vous pouvez cliquer à nouveau sur le lien de notification pour demander une nouvelle requête de synchronisation.
+You can click the notification link again to request a new sync.
