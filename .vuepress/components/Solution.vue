@@ -1,6 +1,6 @@
 <template>
     <details @toggle="toggle" :class="{ visible: isVisible, hidden: !isVisible }">
-        <summary>{{isVisible ? "Solution": "Voir la solution"}}</summary>
+        <summary>{{ isVisible ? labelVisible : labelHidden }}</summary>
         <slot></slot>
     </details>
 </template>
@@ -14,6 +14,26 @@
         methods: {
 			toggle(event){
 				this.isVisible = event.target.open
+            }
+        },
+        computed: {
+			locale(){
+				switch(window.location.pathname.split('/')[1]){
+                    case 'fr': return 'fr'
+                    default: return 'en'
+                }
+            },
+            labelVisible(){
+				switch (this.locale){
+                    case 'fr': return 'Solution'
+                    default: return 'Solution'
+                }
+            },
+            labelHidden(){
+				switch (this.locale){
+					case 'fr': return 'Voir la solution'
+					default: return 'See the solution'
+                }
             }
         }
 	}
