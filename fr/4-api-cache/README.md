@@ -17,7 +17,7 @@ Pour chaque requête, le service Worker va dans un premier temps retourner immé
 
 Ce rafraichissement de l'interface peut se concrétiser de différentes manières selon les cas. On peut simplement ajouter dynamiquement des éléments à une liste, comme des messages dans une conversation instantanée par exemple. Ou alors notifier l'utilisateur d'une autre manière, par exemple avec un lien proposant de charger le nouveau contenu disponible.
 
-![Schema de fonctionnement](./readme_assets/schema.png)
+![Schema de fonctionnement](../../4-api-cache/readme_assets/schema.png)
 
 Avantages:
 

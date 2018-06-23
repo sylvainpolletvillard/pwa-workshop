@@ -1,28 +1,28 @@
 ---
-title: 3. Precaching et mode offline basique
-lang: fr
+title: 3. Precaching and basic offline mode
+lang: en
 ---
 
-# Etape 3 : Precaching des assets statiques pour un mode offline basique
+# Step 3: Precaching static assets for a basic offline mode
 
-On a vu dans l'étape précédent deux méthodes du cycle de vie d'un Service Worker: `install` et `activate`. Dans cette partie, on va poursuivre notre exploration des PWA en mettant en cache les fichiers statiques.
+We saw in the previous step two methods of the Service Worker life cycle: `install` and` activate`. In this part, we will continue our exploration of PWA by caching static files.
 
-## Exploration des API de mise en cache
+## Exploring caching APIs
 
-Parmi les [API auquel a accès le Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), celle qui nous intéresse est [l'API Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache). En effet, elle permet de mettre dans un cache persistant les paires Requêtes/Réponses via la méthode `cache.put(request, response)`. Il est également possible de passer une ou plusieurs URL en argument des méthodes `add` et `addAll` ; elles seront requêtées et la réponse sera ajoutée au cache. On peut également supprimer des entrées du cache avec la méthode `delete`.
+Of the [APIs that the Service Worker has access to](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), the one we are interested in is [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache). Indeed, it makes it possible to put in a persistent cache the requests/responses pairs with the method `cache.put(request, response)`. It is also possible to pass one or more URLs as arguments to the `cache.add` and `cache.addAll` methods; they will be requested and the network response will be added to the cache. You can also delete cache entries with the `cache.delete` method.
 
-Les différents caches sont accessibles via la variable `caches` depuis le Service Worker. C'est l'API [CacheStorage](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) qui permet, entre autres, de créer/obtenir un objet cache ou d'en supprimer un avec les fonctions `open` et `delete`. Les différents caches sont identifiés par des clés de type _string_ dans le `CacheStorage`.
+The different caches are accessible through the `caches` variable from the Service Worker. It is the [CacheStorage API](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) which allows, among other things, to create / retrieve a cache object or to delete one with the `caches.open` and` caches.delete` functions.
 
-Enfin, une autre méthode intéressante du cache est `match`: elle vérifie dans les tous les objets `Cache` gérés par le `CacheStorage` si une requête est identique à celle passée en paramètre. Si c'est le cas, elle retourne un promesse qui permet d'accéder à la réponse en cache.
+Finally, another interesting method of the cache is `match`: it checks in all `Cache` objects managed by the `CacheStorage` if a request is identical to that passed in parameter. If so, it returns a Promise resolved with the cached response.
 
-## Ajout des fichiers statiques dans le cache
+## Adding static files to the cache
 
-Nous allons mettre en cache les fichiers statiques essentiels de l'application, et ce le plus tôt possible. Le moment opportun pour cela est l'évènement `install` du Service Worker, car il n'est appelé qu'une fois lors de son installation. C'est ce qu'on appelle le *precaching*.
+We will cache the essential static files of the application as soon as possible. The best timing to do this is when the `install` event is triggered, because it is only called once at Service Worker installation. This is called *precaching*.
 
-1. Placez-vous dans `sw.js` dans le callback de l'événement `install` vu à l'étape 2.
-2. Ouvrez le cache avec [`caches.open('V1')`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/open), qui retourne une promesse résolue avec l'objet `cache`. Le numéro de version dans le nom du cache nous sera utile pour les mises à jour ultérieures.
-3. Une fois le cache ouvert, ajoutez au cache avec [`cache.addAll(['url1','url2',...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll) les URL vers les fichiers statiques essentiels de notre application: la page HTML racine, le fichier `styles.css` et le fichier `scripts.js`.
-4. Afin que le Service Worker s'active une fois le precaching terminé, passez la `Promise` retournée par `cache.addAll` en argument à [`event.waitUntil()`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil), `event` était l'évènement d'installation. 
+1. Go to `sw.js` in the `install` event callback as seen in step 2.
+2. Open the cache with [`caches.open('V1')`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/open), which returns a Promise resolved with the `cache` object. The version number in the cache name will be useful for future updates.
+3. Once the cache is open, add to the cache with [`cache.addAll(['url1', 'url2', ...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll). the URLs to the essential static files of our application: the root HTML page, the `styles.css` file and the` scripts.js` file.
+4. In order for the Service Worker to activate after precaching is complete, pass the `Promise` returned by `cache.addAll` as an argument to [`event.waitUntil ()`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil), `event` being the installation event.
 
 <Solution>
 ```js
@@ -39,58 +39,58 @@ self.addEventListener('install', event => {
 ```
 </Solution>
 
-Rechargez la page et le Service Worker, en vérifiant bien que la nouvelle version du Service Worker remplace l'ancienne comme vu à l'étape 2. On peut alors vérifier que les fichiers sont ajoutés dans le cache en consultant l'écran *Cache Storage* de l'onglet *Application* des Developer Tools.
+Reload the page and the Service Worker, making sure that the new version of the Service Worker replaces the old one as seen in step 2. We can then check that the files are added to the cache by looking at the *Cache Storage section* in the *Application* tab of Chrome Developer Tools.
 
 ![Cache storage](./readme_assets/cache_storage.png)
 
-## Réponse avec le cache en priorité
+## Response with cache in priority
 
-Maintenant que les fichiers sont en cache, il nous reste à indiquer d'utiliser la version en cache lorsque le navigateur les demande. Pour ce faire, nous allons passer par l'évènement `fetch`. Ce dernier intercepte tous les appels émis par les clients ayant installé le Service Worker. On peut alors retourner une réponse personnalisée avec `event.respondWith`, où `event` est le [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent). La fonction [`event.respondWith`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith) prend comme unique argument une promesse qui devra être résolue avec la réponse à retourner. 
+Now that the files are cached, we have to indicate to use their cached version when the browser requests them. To do this, we will use the `fetch` event. The latter intercepts all requests made by clients who have installed the Service Worker. You can then return a custom response with `event.respondWith`, where `event` is the [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent). The [`event.respondWith`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith) function takes as a single argument a Promise that must be resolved with the response to return.
 
 ```js
 self.addEventListener('fetch', event => {
 	console.log(`Request of ${event.request.url}`);
-	
-	// comportement par défaut: requête le réseau
+
+	// default behaviour: request the network
 	event.respondWith( fetch(event.request) );
 })
 ```
 
-Nous voulons changer le comportement par défaut et retourner les versions préalablement mises en cache si elles existent. Justement, la fonction [`caches.match`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/match) retourne une promesse résolue avec un objet `Response`, tout comme `fetch(event.request)`. On peut donc remplacer l'un par l'autre pour retourner les fichiers statiques en cache au lieu d'aller les chercher sur le réseau.
+We want to change the default behavior and return previously cached versions if they exist. Precisely, the [`caches.match`](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage/match) function returns a Promise resolved with a` Response` object, just like `fetch (event.request)`. So we can replace one by the other and return the static files from cache instead of requesting them from the network.
 
-1. Ajoutez un callback pour l'événement `fetch`, de la même façon que vous l'avez fait pour `install` à l'étape précédente.
-2. Appelez la méthode `caches.match(event.request)` pour chercher dans le cache une éventuelle réponse mise en cache pour la requête correspondante.
-3. Si aucune entrée dans le cache n'est trouvée, la promesse est résolue avec la valeur `undefined`. Dans ce cas, il faut requêter le réseau et retourner `fetch(event.request)` à la place.
-4. Il ne reste plus qu'à retourner cette promesse de réponse à la requête en la passant en argument à `event.respondWith()` 
+1. Add a callback for the `fetch` event, the same way you did for` install` in the previous step.
+2. Call the `caches.match(event.request)` method to search the cache for a cached response for the corresponding request.
+3. If no cache entry is found, the Promise is resolved with the value `undefined`. In this case, you need to request the network and return `fetch(event.request)` instead.
+4. Finally, return this Promise of Response to the client request by passing it as argument to `event.respondWith()`
 
 <Solution>
 ```js
 self.addEventListener('fetch', event => {
-  // Stratégie Cache-First
+  // Cache-First Strategy
   event.respondWith(
-    caches.match(event.request) // On vérifie si la requête a déjà été mise en cache
-    .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
+    caches.match(event.request) // check if the request has already been cached
+    .then(cached => cached || fetch(event.request)) // otherwise request network
   );
 });
 ```
 </Solution>
 
-## Test de fonctionnement offline
+## Testing offline
 
-Si tout a été fait correctement, vous devriez désormais pouvoir tester l'application en mode offline. Coupez votre serveur local et essayez de recharger l'application. La page en cache devrait alors s'afficher.
+If everything has been done correctly, you should now be able to test the application in offline mode. Shut down your local server and try to reload the application. The cached page should be displayed.
 
-## Mise à jour du cache statique
+## Update the static cache
 
-La mise en cache des fichiers statiques pose un problème; que se passe-t-il si j'ajoute, supprime, ou modifie des fichiers ?
+Caching static files raises a question: what happens if I add, delete, or modify these files on the server ?
 
-Tel que nous avons codé actuellement notre Service Worker, on rechargera toujours les fichiers en cache, donc les nouvelles versions déployées sur le serveur ne seront jamais utilisées.
+As we have currently coded our Service Worker, we will always load the cached files, so new versions deployed on the server will never be used.
 
-Pour gérer ce problème, une solution est de passer par un nouveau cache avec un autre nom. L'idée ici serait de créer un nouveau cache **V2** qui contient les nouveaux fichiers et de supprimer l'ancien cache. 
+To handle this problem, one solution is to use a new cache with another name. The idea here would be to create a new **V2** cache that contains the new files and remove the previous obsolete cache.
 
-1. Dans le callback de l'événement `install`, changez le nom du cache en `V2`
-2. Dans le callback de l'événement `activate`, supprimez l'ancien cache avec `caches.delete('V1')`
-3. Passez la `Promise` retournée par `caches.delete` dans `event.waitUntil` afin d'attendre la suppression du cache avant la fin de l'étape d'activation
-4. *(facultatif)* - Améliorez votre code de nettoyage des anciens caches en supprimant tous les caches qui ne font pas partie de votre liste de caches connus et utilisés. Vous pouvez parcourir tous les caches existants avec la méthode `caches.keys()`
+1. In the `install` event callback, change the cache name to` V2`
+2. In the `activate` event callback, delete the old cache with `caches.delete('V1')`
+3. Pass the `Promise` returned by` caches.delete` in `event.waitUntil` in order to wait for the cache to be removed before the end of the activation step
+4. *(optional)* - Improve your cache cleanup code by removing all caches that are not in your whitelist of used caches. You can browse all existing caches with the `caches.keys()` method
 
 <Solution>
 ```js
@@ -110,23 +110,25 @@ self.addEventListener('activate', event => {
 ```
 </Solution>
 
-## Installation de la PWA
+![Flowsheet](./readme_assets/schema.png)
 
-Selon le navigateur et l'OS, les conditions techniques requises pour pouvoir installer la PWA sur le système varient. Mais en principe, si vous avez un manifeste et un Service Worker actif gérant les requêtes entrantes avec `fetch`, alors vous pouvez actuellement installer cette PWA sur toutes les plates-formes supportées, et elles mettront à profit le manifeste et le Service Worker.
+## Installing the PWA
 
-L'installation de PWA est supportée sur Chrome OS mais encore expérimentale sur les autres systèmes avec Chrome. Vous pouvez activer l'installation de PWA avec Chrome sur Windows en activant ce flag: **chrome://flags/#enable-pwa-full-code-cache** ; mais le support est encore incomplet.
+Depending on the browser and OS, the technical requirements to install the PWA on the system may vary. But in theory, if you have a manifest and an active Service Worker handling incoming requests with `fetch`, then you should be able to install that PWA on all supported platforms, and they will leverage the manifest and Service Worker.
 
-La plate-forme ayant la meilleure intégration ce jour est **Android**. Si vous disposez d'un smartphone Android pouvant requêter votre serveur suite à un partage de connexion, essayez de charger l'application via Chrome for Android. Une fois la page web ouverte, le menu de Chrome devrait comporter l'option: **Add to home screen**
+The installation of PWA is supported on Chrome OS but still experimental on other systems with Chrome. You can enable the installation of PWA with Chrome by enabling this flag: **chrome://flags/#enable-pwa-full-code-cache**; but the support is still incomplete.
+
+The platform with the best support today is **Android**. If you have an Android smartphone that can connect to your server by sharing a local connection, then try to load the app through Chrome for Android. Once the web page is open, the Chrome menu should include the option: **Add to home screen**
 
 ![Add to home screen](./readme_assets/pwa_install_menu.jpg)
 
-Poursuivre l'installation. Un nouveau raccourci devrait apparaitre dans l'écran d'accueil du smartphone. C'est le raccourci vers notre PWA !
+Continue the installation. A new shortcut should appear in your phone home screen. This is the shortcut to our PWA!
 
 ![PWA bookmark](./readme_assets/pwa_install.jpg)
 ![Splash-screen](./readme_assets/splash-screen.jpg)
 
-Une fois la PWA installée, quand on clique sur le raccourci, un splash screen est affiché brièvement. Celui-ci reprend les couleurs et l'icône spécifiée dans le manifeste.
+Once the PWA is installed, when you click on the shortcut, a splash screen is displayed briefly. It uses the colors and icons specified in the web app manifest.
 
-Vous remarquerez que la barre d'adresse et le reste de l'interface du navigateur ne sont plus présentes, si vous avez configuré la propriété `display` correctement dans le manifeste.
+You will also notice that the URL bar and the rest of the browser UI are no longer shown if you have set the `display` property to `standalone` in the manifest.
 
 ![PWA run from bookmark](./readme_assets/pwa-fullscreen.jpg)

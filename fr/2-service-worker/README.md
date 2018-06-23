@@ -43,7 +43,7 @@ Service Worker registered: [object ServiceWorkerRegistration]
 
 Cela signifie que le Service Worker a bien été enregistré. On peut vérifier cela grâce à l'onglet **Application** des ChromeDev tools.
 
-![Service Worker bien installé](./readme_assets/service-worker-setup.png 'Cycle de vie du Service Worker')
+![Service Worker bien installé](../../2-service-worker/readme_assets/service-worker-setup.png 'Cycle de vie du Service Worker')
 
 Nous allons voir dans le section qui suite ce qui se passe après l'enregistrement d'un Service Worker.
 
@@ -51,7 +51,7 @@ Nous allons voir dans le section qui suite ce qui se passe après l'enregistreme
 
 Quand on enregistre un Service Worker, son cycle de vie démarre. Le schéma suivant représente les différentes étapes du cycle de vie d'un Service Worker ([source](https://developers.google.com/web/fundamentals/primers/service-workers/)).
 
-![Cycle de vie du Service Worker](./readme_assets/sw-lifecycle.png 'Cycle de vie du Service Worker')
+![Cycle de vie du Service Worker](../../2-service-worker/readme_assets/sw-lifecycle.png 'Cycle de vie du Service Worker')
 
 Les premières étapes sont l'installation et l'activation. Vérifions cela en ajoutant le code suivant dans le fichier _sw.js_.
 
@@ -74,7 +74,7 @@ Service Worker installing.
 
 Vérifions, l'écran Service Worker des devtools. Un affichage similaire à la capture suivante devrait apparaitre:
 
-![Service Worker en attente d'installation](./readme_assets/sw-waiting.png 'Service Worker en attente')
+![Service Worker en attente d'installation](../../2-service-worker/readme_assets/sw-waiting.png 'Service Worker en attente')
 
 Quand on rafraîchit la page, le navigateur essaie d'installer puis d'activer un nouveau Service Worker. Comme ce dernier est différent du Service Worker actif, son activation est suspendue. Dans ce cas, Il entre en attente et ne sera installé que si le précédent Service Worker ne contrôle aucun client. On a deux solutions dans ce cas: soit fermer tous les onglets controlés par le premier Service Worker ou bien cliquer sur le lien **skipWaiting**.
 
