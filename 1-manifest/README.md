@@ -1,98 +1,97 @@
 ---
-title: 1. Ajout d'un Web App Manifest
-lang: fr
+title: 1. Adding a Web App Manifest
+lang: en
 ---
 
-# Etape 1 : Ajout d'un Web App Manifest
+# Step 1: Adding a Web App Manifest
 
-Commençons par créer le fichier manifest. Ce fichier est défini ainsi par [MDN](https://developer.mozilla.org/en-US/docs/Web/Manifest):
+Let's start by creating the manifest file. This file is defined by [MDN](https://developer.mozilla.org/en-US/docs/Web/Manifest) as follows:
 
-> The web app manifest provides information about an application (such as name, author, icon, and description) in a JSON text file.
+The web app manifest provides information about an application (such as its name, author, icon, and description) in a JSON text file.
 
-En français: le manifeste d'application web fournit des informations sur l'application (comme son nom, son icône et sa description) dans un fichier texte JSON.
+The presence of a manifest also provides other benefits. Here are a few:
 
-La présence d'un manifeste procure également d'autres avantages. En voici quelques uns:
+- It allows some browsers to add a bookmark or shortcut for the PWA on the home screen
+- It allows the PWA to be referenced on some apps stores such as the [Windows Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps).
+- It allows to display the PWA in full screen or as standalone window, without browser chrome.
 
-* Il permet à certains navigateurs d'ajouter au bureau ou à l'écran d'accueil un raccourci vers la PWA
-* Il permet à la PWA d'être référencée sur certains apps stores tels que le [Windows Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps).
-* Il permet d'afficher la PWA en plein écran, sans UI navigateur, avec un écran initial (splashscreen) lors de l'ouverture de la PWA
+## Manifest Properties
 
-## Propriétés du manifeste
+The manifest is a JSON file that contains several fields. It is recommended to fill in as much of them as possible to imporove the support and the discovery of the PWA. Here are [the available attributes to date](https://developer.mozilla.org/en/docs/Web/Manifest):
 
-Le manifeste est un fichier JSON contient plusieurs champs. Il est recommandé de renseigner un maximum de champs afin de permettre à la PWA d'être reconnue comme telle par les navigateurs et les stores. Voici la [liste des attributs du manifeste](https://developer.mozilla.org/fr/docs/Web/Manifest):
+- `name` - displayed on the splash-screen below the app icon
+- `short_name` - displayed below the shortcut on the desktop or the home screen
+- `description` - a general description of the application
+- `start_url` - the URL that is loaded first when you open the application from its shortcut on the desktop or home screen
+- `scope` - the pages of the site that are part of the PWA experience. The ``. "` Value includes everything in the manifest tree. It is therefore more relevant to place the latter at the root of the site
+- `background_color` - The background color of the splash-screen
+- `theme_color` - the general theme color of the application, used in particular in the status bars if they are displayed
+- `display` - specifies the display mode. Here are the different modes available sorted by order of fallback:
+  - `fullscreen`: the entire available display area is used and no browser chrome is shown.
+  - `standalone`: similar behavior to a native application. This means that the application will have its own window, its own icon in the launcher, and so on. In this mode, the browser will exclude interface elements that control the navigation but may include other elements such as a status bar.
+  - `minimal-ui`: the application will look and behave like a stand-alone application, but it will have some interface elements to control the navigation. Items vary by browser and system.
+  - `browser` (default): the application opens in a new tab or browser window, depending on the browser and the platform
+- `guidance` - to force or encourage a particular orientation for mobile devices:`any`, `natural`,`landscape`, `portrait` ...
+- `dir` - the reading direction of the text:`ltr`, `rtl` or`auto`.
+- `lang` - the main language of the application.
+- `related_applications` - indicates links to native applications that can be installed on the underlying platform, and may be an alternative or supplement to the PWA; for example a native version of the web application. Ignore if there is no native application.
+- `icons` - list of application icons of different resolutions, used especially for shortcut and splashscreen. The recommended sizes to be supplied are at least 192x192px and 512x512px. The device will choose the best icon automatically depending on the case. It is also interesting to provide in fallback an SVG vector version of the icon that will fit a maximum of sizes.
 
-* `name`  —  affiché sur le splashscreen
-* `short_name ` —  affiché en dessous du raccourci sur le bureau ou l'écran d'accueil
-* `description ` —  une description générale de l'application
-* `start_url ` — l'URL qui est chargée en premier quand on ouvre l'application depuis son raccourci sur le bureau ou l'écran d'accueil
-* `scope`  —  les pages du site faisant partie de l'expérience PWA. La valeur `"."` inclue tout ce qui se situe dans l'arborescence de manifeste. Il est donc plus pertinent de placer ce dernier à la racine du site
-* `background_color `—   La couleur d'arrière-plan du splashscreen
-* `theme_color ` —  la couleur de thème général de l'application, utilisée notamment dans les barres de statut si elles sont affichées
-* `display `—   spécifie le mode d'affichage. Voici les différents modes disponibles triés par ordre de fallback :
-  * `fullscreen`: toute la zone d'affichage disponible est utilisée et aucun agent utilisateur n'est montré.
-  * `standalone`: comportement similaire a une application native. Cela peut signifier que l'application a sa propre fenêtre, sa propre icône dans le lanceur d'applications, etc. Dans ce mode, l'agent utilisateur va exclure les élements d'interface qui permettent de contrôler la navigation mais peut inclure d'autres éléments comme une barre de statut par exemple.
-  * `minimal-ui`: l'application va ressembler et se comporter comme une application autonome, mais elle aura quelques élements d'interface permettant de contrôler la navigation. Les éléments varient en fonction du navigateur et du système.
-  * `browser` (par défaut): l'application s'ouvre dans un nouvel onglet ou une nouvelle fenêtre du navigateur, en fonction du navigateur et de la plateforme
-* `orientation`  —  pour forcer ou encourager une orientation particulière pour les appareils mobiles: `any`, `natural`, `landscape`, `portrait`...
-* `dir`  —  le sens de lecture du texte: `ltr`, `rtl` ou `auto`.
-* `lang`  —  la langue principale de l'application.
-* `related_applications`  — indique des liens vers des applications natives installables sur la plate-forme sous-jacente, et pouvant constituer une alternative ou un complément à la PWA ; par exemple une version native de l'application web. A ignorer s'il n'y a pas d'application native.
-* `icons ` —  liste d'icônes de l'application de différentes résolutions, utilisées notamment pour le raccourci et le splashscreen. Les tailles à fournir recommandées sont a minima 192x192px et 512x512px. L'appareil choisira la meilleure icone automatiquement selon les cas. Il est également intéressant de fournir en fallback une version vectorielle SVG de l'icône qui s'adaptera à un maximum de tailles.
+## Using a manifest generator
 
-## Utilisation d'un générateur de manifeste
+Since the application manifest is a text file, you can choose to write it by hand or use a tool that simplifies its creation. Several tools are available on the internet:
 
-Comme le manifeste d'application est un fichier texte, on peut opter pour l'écrire à la main ou alors utiliser un outil qui simplifie sa création. Plusieurs outils sont disponibles sur internet:
+- [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/)
+- [Web App Manifest Generator](https://tomitm.github.io/appmanifest/).
 
-* [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/)
-* [Web App Manifest Generator](https://tomitm.github.io/appmanifest/).
+Using one of these tools, generate a comprehensive manifest file. Your manifest should at least contain the following properties: `name`,`short_name`, `lang`,`start_url`, `display: 'standalone` `,` theme_color`and`icons` with at least two PNG icons and one SVG to the recommended sizes.
 
-En utilisant un de ces outils, générez un fichier manifeste exhaustif. Votre manifeste devra au moins contenir les propriétés suivantes: `name`, `short_name`, `lang`, `start_url`, `display: "standalone"`, `theme_color` et `icons` avec au moins deux icônes PNG et une SVG aux tailles recommandées.
-
-On peut ensuite enregistrer le manifeste dans un fichier texte appelé `manifest.json` à la racine du site.
+The manifest can then be saved in a text file called `manifest.json` at the root of the site.
 
 <Solution>
-```json
+`` `Json
 {
   "name": "Progressive Web Apps Workshop",
   "short_name": "PWA Workshop",
   "lang": "fr",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#c6acee",
+  "theme_color": "# c6acee",
   "icons": [
     {
-      "src": "icons/logo-192.png",
+      "src": "icons / logo-192.png",
       "sizes": "192x192"
-    },
+    }
     {
-      "src": "icons/logo-512.png",
+      "src": "icons / logo-512.png",
       "sizes": "512x512"
-    },
+    }
     {
-      "src": "icons/logo.svg",
+      "src": "icons / logo.svg",
       "sizes": "513x513"
     }
   ]
 }
-```
-</Solution>
+`` `
+</ Solution>
 
-## Ajout du manifeste dans l'application
+## Adding the manifest in the application
 
-La dernière étape consiste à référencer le manifeste dans la page HTML de notre application, grâce à cette balise `link` à mettre dans le `head` : `<link rel="manifest" href="manifest.json">`.
+The last step is to reference the manifest in the HTML page of our application, thanks to this `link` tag to put in the`head`: `<link rel =" manifest "href =" manifest.json ">`.
 
-Notez que d'autres métadonnées sont également exploitées par certains navigateurs et peuvent s'avérer utiles. Il est probable qu'à l'avenir, ces métadonnées tendent à disparaître au profit de nouvelles propriétés dans le manifeste d'application. En voici un exemple :
+Note that other metadata are also exploited by some browsers and may be useful. It is likely that in the future these metadata will tend to disappear in favor of new properties in the application manifest. Here is an example:
 
-```html
-<link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="application-name" content="PWA Workshop">
-<meta name="apple-mobile-web-app-title" content="PWA Workshop">
-<meta name="msapplication-starturl" content="/index.html">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-```
+`` Html
 
-## Test de bon fonctionnement
+<link rel = "manifest" href = "manifest.json">
+<meta name = "mobile-web-app-able" content = "yes">
+<meta name = "apple-mobile-web-app-capable" content = "yes">
+<meta name = "application-name" content = "PWA Workshop">
+<meta name = "apple-mobile-web-app-title" content = "PWA Workshop">
+<meta name = "msapplication-starturl" content = "/ index.html">
+<meta name = "viewport" content = "width = device-width, initial-scale = 1, shrink-to-fit = no">
+`` `
 
-Vous pouvez vérifier la prise en compte du manifeste en regardant dans l'onglet *Applications* des Developer Tools de Chrome. La liste des propriétés du manifeste devrait être affichée.
+## Functionality test
+
+You can check that the manifest is taken into account by looking in the _ Applications _ tab of Chrome's Developer Tools. The list of manifest properties should be displayed.
