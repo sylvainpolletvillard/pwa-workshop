@@ -11,20 +11,20 @@ Let's start by creating the manifest file. This file is defined by [MDN](https:/
 
 The presence of a manifest also provides other benefits. Here are a few:
 
-- It allows some browsers to add a bookmark or shortcut for the PWA on the home screen
-- It allows the PWA to be referenced on some app stores such as the [Windows Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps).
-- It allows to display the PWA in full screen or as standalone window, without the browser UI.
+- Supported browsers can install the PWA and add a shortcut on the home screen
+- The PWA can be referenced on some app stores such as the [Windows Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps).
+- The PWA can be displayed in full screen or in a standalone window, without the browser UI.
 
 ## Manifest fields
 
-The manifest is a JSON file that contains several fields. It is recommended to fill in as much of them as possible to imporove the support and the discovery of the PWA. Here are [the available attributes to date](https://developer.mozilla.org/en/docs/Web/Manifest):
+The manifest is a JSON file that contains several properties. It is recommended to fill in most of them to optimize the discovery and the experience of the PWA. Here are [all the fields currently specified](https://developer.mozilla.org/en/docs/Web/Manifest):
 
 - `name` - displayed on the splash-screen below the app icon
 - `short_name` - displayed below the shortcut on the desktop or on the home screen
 - `description` - a general description of the application
 - `start_url` - the URL that is loaded first when you open the application from its shortcut
 - `scope` - the pages of the site that are part of the PWA experience. The `"."` value includes everything in the manifest directory and subdirectories. It is therefore more relevant to place the latter at the root of the site
-- `background_color` - The background color of the splash-screen
+- `background_color` - the background color of the splash-screen
 - `theme_color` - the general theme color of the application, used in the status bars for example if they are displayed
 - `display` - specifies the display mode. Here are the different modes available sorted by order of fallback:
   - `fullscreen`: all of the available display area is used and no browser UI is shown.
@@ -44,7 +44,7 @@ Since the application manifest is a text file, you can choose to write it by han
 - [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/)
 - [Web App Manifest Generator](https://tomitm.github.io/appmanifest/).
 
-Using one of these tools, generate a comprehensive manifest file. Your manifest should at least contain the following properties: `name`,`short_name`, `lang`,`start_url`, `display: 'standalone'`, `theme_color` and `icons` with at least two PNG icons and one SVG at the recommended sizes. You can find example icons in the `app/icons` folder.
+Using one of these tools, generate a manifest file for the app. Your manifest should at least contain the following properties: `name`,`short_name`, `lang`,`start_url`, `display: 'standalone'`, `theme_color` and `icons` with at least two PNG icons and one SVG at the recommended sizes. You can find example icons in the `app/icons` folder.
 
 The manifest can then be saved in a text file called `manifest.json` in the app root folder.
 
@@ -91,6 +91,6 @@ Note that other metadata are also used by some browsers and may be useful. It is
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 ```
 
-## Test
+## Testing
 
 You can check that the manifest is retrieved correctly by looking in the _Applications_ tab of Chrome Developer Tools. The list of manifest properties should be displayed.
