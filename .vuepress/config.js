@@ -21,15 +21,6 @@ module.exports = {
 		}
 	},
 	themeConfig: {
-		sidebar: [
-			'/',
-			'/1-manifest/',
-			'/2-service-worker/',
-			'/3-precaching/',
-			'/4-api-cache/',
-			'/5-background-sync/',
-			'/finish'
-		],
 		locales: {
 			'/': {
 				// text for the language dropdown
@@ -37,12 +28,30 @@ module.exports = {
 				// label for this locale in the language dropdown
 				label: 'English',
 				// text for the edit-on-github link
-				editLinkText: 'Edit this page on GitHub'
+				editLinkText: 'Edit this page on GitHub',
+				sidebar: [
+					'/',
+					'/1-manifest/',
+					'/2-service-worker/',
+					'/3-precaching/',
+					'/4-api-cache/',
+					'/5-background-sync/',
+					'/finish'
+				]
 			},
 			'/fr/': {
 				selectText: 'Langue',
 				label: 'Français',
-				editLinkText: 'Editer sur GitHub'
+				editLinkText: 'Editer sur GitHub',
+				sidebar: [
+					'/fr/',
+					'/fr/1-manifest/',
+					'/fr/2-service-worker/',
+					'/fr/3-precaching/',
+					'/fr/4-api-cache/',
+					'/fr/5-background-sync/',
+					'/fr/finish'
+				]
 			}
 		}
 	}
