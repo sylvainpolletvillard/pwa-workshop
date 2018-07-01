@@ -20,7 +20,7 @@
 			}
 		},
 
-		beforeMount(){
+		mounted(){
 			this.currentLocale = locales[this.$localeConfig.lang];
 			this.suggestedLocale = locales[window.navigator.language]|| defaultLocale
 		},
