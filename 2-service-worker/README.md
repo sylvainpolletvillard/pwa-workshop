@@ -1,26 +1,26 @@
 ---
-title: 2. Installation d'un Service Worker
-lang: fr
+title: 2. Install a Service Worker
+lang: en
 ---
 
-# Etape 2 : Installation d'un Service Worker
+# Step 2 : Install a Service Worker
 
-Le Service Worker est une API assez vaste et présentant beaucoup de potentiel. Dans le cadre d'une PWA, le Service Worker va principalement nous permettre de définir une stratégie de mise en cache et ainsi mieux gérer les connexions capricieuses, voire un mode offline complet pour notre application.
+[Service Worker](https://developers.google.com/web/fundamentals/primers/service-workers/) is a fairly large API with a lot of potential. In the context of a PWA, a Service Worker will mainly allow us to define a caching strategy and thus better manage unstable connections, or even get a complete offline mode for our application.
 
-Voici quelques [spécificités](https://developers.google.com/web/fundamentals/primers/service-workers/) des Service Workers:
+What you should know about Service Workers:
 
-* Ce sont des workers codés en JavaScript. Ils s'éxécutent dans un thread distinct du script applicatif et ne peuvent pas accéder au DOM ni aux variables globales, mais l'application peut communiquer avec le worker grâce à l'API `postMessage`.
-* Ce sont des proxy réseau programmables. En effet, ils permettent d'intercepter les requêtes réseau en partance du navigateur et de personnaliser leurs réponses.
-* Ils ont un cycle de vie indépendant de l'application web associée. Ils s'arrêtent lorsqu'ils ne sont pas utilisés et redémarrent au besoin.
-* Ils peuvent fonctionner sans que l'application web associée tourne, ce qui permet certaines fonctionnalités inédites comme l'envoi de notifications Push.
-* Plusieurs API sont disponibles au sein du Service Worker pour persister les données localement, par exemple l'[**API Cache**](https://developer.mozilla.org/fr/docs/Web/API/Cache) et l'[**API IndexedDB**](https://developer.mozilla.org/fr/docs/Web/API/API_IndexedDB).
-* La plupart des API associées sont basées sur l'utilisation des promesses ([`Promise`](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Promise)).
+* They are workers coded in JavaScript. They run in their own thread, separated from the application, and can not access the DOM or global variables. But the app and worker can communicate through the `postMessage` API.
+* These can act like programmable network proxies: they can intercept network requests from the browser and customize the responses.
+* Their life cycle is independent of the associated web application: they automatically stop when not in use and restart when needed.
+* They can work even when the associated web application is not running, allowing some new features like sending push notifications.
+* Several APIs are available within the Service Worker to persist data locally, for example the [**Cache API**](https://developer.mozilla.org/en/docs/Web/API/Cache) and the [**IndexedDB API**](https://developer.mozilla.org/en/docs/Web/API/API_IndexedDB).
+* Most of the associated APIs use [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 
-Dans le dossier `app`, créez un fichier `sw.js` vide (pour l'instant). Il contiendra le code de votre Service Worker.
+In the `app` folder, create a new `sw.js` file. It will contain the code of your Service Worker.
 
-## Enregistrement du Service Worker
+## Registering the Service Worker
 
-Avant d'utiliser un Service Worker, il faut le faire enregistrer par l'application. On enregistre généralement le Service Worker au chargement de la page. Dans le fichier `scripts.js`, complétez la fonction appelée au chargement du document avec le code suivant :
+Before using a Service Worker, it must be registered by the application. The Service Worker is usually registered when the page is loaded. In the `scripts.js` file, complete the function called when the document is loaded with the following code:
 
 ```js
 if ('serviceWorker' in navigator) {
@@ -35,25 +35,25 @@ if ('serviceWorker' in navigator) {
 }
 ```
 
-Avant de rafraichir la page, Rechargez la page, le log suivant devrait apparaitre une fois la page chargée.
+Reload the page, the following log should appear in the console once the page loaded.
 
 ```
 Service Worker registered: [object ServiceWorkerRegistration]
 ```
 
-Cela signifie que le Service Worker a bien été enregistré. On peut vérifier cela grâce à l'onglet **Application** des ChromeDev tools.
+This means that the Service Worker has been registered. This can be verified by looking in the **Application** tab of Chrome Dev Tools, then the **Service Workers** subsection.
 
-![Service Worker bien installé](./readme_assets/service-worker-setup.png 'Cycle de vie du Service Worker')
+![Service Worker installed](./readme_assets/service-worker-setup.png)
 
-Nous allons voir dans le section qui suite ce qui se passe après l'enregistrement d'un Service Worker.
+We will see in the following section what happens after registering a Service Worker.
 
-## Cycle de vie du Service Worker
+## Service Worker life cycle
 
-Quand on enregistre un Service Worker, son cycle de vie démarre. Le schéma suivant représente les différentes étapes du cycle de vie d'un Service Worker ([source](https://developers.google.com/web/fundamentals/primers/service-workers/)).
+When you register a Service Worker, its life cycle starts. The following diagram shows the different stages of a Service Worker's life cycle ([source](https://developers.google.com/web/fundamentals/primers/service-workers/)).
 
-![Cycle de vie du Service Worker](./readme_assets/sw-lifecycle.png 'Cycle de vie du Service Worker')
+![Service Worker life cycle](./readme_assets/sw-lifecycle.png)
 
-Les premières étapes sont l'installation et l'activation. Vérifions cela en ajoutant le code suivant dans le fichier _sw.js_.
+The first steps are installation and activation. Let's check this by adding the following code in the _sw.js_ file.
 
 ```js
 self.addEventListener('install', event => {
@@ -65,31 +65,37 @@ self.addEventListener('activate', event => {
 });
 ```
 
-Rechargez la page et vérifier les logs. Tiens, on ne voit que le log d'installation.
+Reload the page and check the logs. Curiously, we only see the installation log.
 
 ```
 Service Worker registered [object ServiceWorkerRegistration]
 Service Worker installing.
 ```
 
-Vérifions, l'écran Service Worker des devtools. Un affichage similaire à la capture suivante devrait apparaitre:
+Let's check what is going on in the Service Worker section of the Dev Tools. You should see something like this:
 
-![Service Worker en attente d'installation](./readme_assets/sw-waiting.png 'Service Worker en attente')
+![Service Worker waiting to activate](./readme_assets/sw-waiting.png)
 
-Quand on rafraîchit la page, le navigateur essaie d'installer puis d'activer un nouveau Service Worker. Comme ce dernier est différent du Service Worker actif, son activation est suspendue. Dans ce cas, Il entre en attente et ne sera installé que si le précédent Service Worker ne contrôle aucun client. On a deux solutions dans ce cas: soit fermer tous les onglets controlés par le premier Service Worker ou bien cliquer sur le lien **skipWaiting**.
+When you refresh the page, the browser tries to install and activate the Service Worker with the new code. Since the latter is different from the active Service Worker, the one that has been registered at the beginning of step 2, the activation of the new one is suspended. In this case, it is put in a waiting mode and will only be installed if the previous Service Worker does not control any clients. There are two solutions in this case: either close all the tabs controlled by the first Service Worker, or click on the **skipWaiting** link in the dev tools.
 
-Cliquez sur le lien **skipWaiting**. On remarque que l'ancien Service Worker a disparu et que celui qui était en attente prend sa place. Le log d'activation s'affiche également.
+Click on the **skipWaiting** link. Notice that the former Service Worker has disappeared and that the one who was waiting took his place. The activation log is also displayed in the console.
 
 ```
 Service Worker activating.
 ```
 
-Quand on rafraîchit la page sans modifier le Service Worker, on remarque qu'on ne passe plus par les étapes d'installation et d'activation.
+When we refresh the page without modifying the Service Worker, we notice that we no longer go through the installation and activation steps.
 
-On peut comprendre qu'il est nécessaire de gérer en production la montée en version des Service Workers. En développement, on peut s'en passer en cochant la case **Update on reload**. Cette option permet d'activer immédiatement les futurs nouveaux Service Workers. C'est un équivalent d'un clic automatique sur **skipWaiting** à chaque fois.
+This behaviour is necessary to manage version upgrades in production. In practice, you will write code in the Service Worker that manages this update process and call `skipWaiting` programmatically once everything is set up correctly. 
+
+During development, we will keep things simple by ticking the checkbox **Update on reload**. This option will immediately activate future new Service Workers. It's an equivalent of an automatic click on **skipWaiting** each time.
 
 ::: tip Note
-Activez l'option **Update on reload** lorsque vous travaillez sur le code d'un Service Worker pour toujours disposer de la dernière version. Attention toutefois, cette option installera et activera le Service Worker **avant** d'afficher la page, ce qui ne vous permettra pas de voir les logs associés à ces évènements en console. 
+Enable the **Update on reload** option when working on the code of a Service Worker to always have the latest version. 
+
+![Update on reload](./readme_assets/devtools-update-on-reload.png)
+
+However, this option will install and activate the Service Worker **before** displaying the page, so you won't see the logs associated with these events in console.
 :::
 
-Dans cette partie, nous avons vu comment installer un Service Worker. On a également géré deux évènements du cycle de vie du Service Worker: **install** et **activate**. Nous allons maintenant voir comment faire quelque-chose d'utile avec ce Service Worker.
+In this part, we saw how to install a Service Worker, and how to managetwo Service Worker lifecycle events: **install** and **activate**. Now, let's see how to do something useful with this Service Worker.
