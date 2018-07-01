@@ -17,20 +17,14 @@
             }
         },
         computed: {
-			locale(){
-				switch(window.location.pathname.split('/')[1]){
-                    case 'fr': return 'fr'
-                    default: return 'en'
-                }
-            },
             labelVisible(){
-				switch (this.locale){
+				switch (this.$lang){
                     case 'fr': return 'Solution'
                     default: return 'Solution'
                 }
             },
             labelHidden(){
-				switch (this.locale){
+				switch (this.$lang){
 					case 'fr': return 'Voir la solution'
 					default: return 'See the solution'
                 }

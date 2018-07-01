@@ -5,9 +5,7 @@ prev: false
 next: ./1-manifest/
 ---
 
-::: tip This workshop is available in other languages
-[Ce workshop est disponible en français](fr/README.md)
-:::
+<SuggestLocale></SuggestLocale>
 
 # Introduction
 
