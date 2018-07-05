@@ -53,6 +53,10 @@ module.exports = {
 					'/fr/finish'
 				]
 			}
-		}
+		},
+		nav: [
+			{ text: 'Cookbook', link: 'https://pwa-cookbook.js.org' },
+			{ text: 'Github', link: 'https://github.com/sylvainpolletvillard/pwa-workshop' }
+		]
 	}
 }
