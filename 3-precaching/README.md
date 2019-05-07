@@ -7,11 +7,54 @@ lang: en
 
 We saw in the previous step two methods of the Service Worker life cycle: `install` and` activate`. In this part, we will continue our exploration of PWA by caching static files.
 
+## Overview of promises and async/await
+
+Service worker APIs rely heavily on promises. Let's take a quick look on how they work.
+
+Promises provide a way to transform an asynchronous function to an object which allows us to react when the function completes.
+The ES2015 allows to create promises using this constructor:
+
+```javascript
+const promise = new Promise((resolve, reject) => {
+  // async function execution
+  // resolve is called on success
+  // reject is called on failure
+});
+```
+
+We will not use this kind of constructor however because the Service worker APIs provide functions that return a promise, as illustrated by the following example:
+
+```javascript
+function someAsyncServiceWorlerFunction(){
+  return new Promise((resolve, reject) => {
+  // async function execution
+  // resolve is called on success
+  // reject is called on failure
+  });
+}
+const promise = someAsyncServiceWorlerFunction();
+```
+
+Once we create a promise object, it starts to execute asynchronously. We can use the `then()` and `reject()` functions to execute a function when the promises succeeds (it calls `resolve`) or fails (it calls `reject`).
+
+The following example illustrates a promise that generates a random number after a 3 seconds delay. It succeeds when the generated number is even and fails when the generated number is odd.
+
+```javascript
+function generateRandomNumber(){
+  return new Promise((resolve, reject) => {
+  // async function execution
+  // resolve is called on success
+  // reject is called on failure
+  });
+}
+const promise = someAsyncServiceWorlerFunction();
+```
+
 ## Exploring caching APIs
 
 Of the [APIs that the Service Worker has access to](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), the one we are interested in is [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache). Indeed, it makes it possible to put in a persistent cache the requests/responses pairs with the method `cache.put(request, response)`. It is also possible to pass one or more URLs as arguments to the `cache.add` and `cache.addAll` methods; they will be requested and the network response will be added to the cache. You can also delete cache entries with the `cache.delete` method.
 
-The different caches are accessible through the `caches` variable from the Service Worker. It is the [CacheStorage API](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) which allows, among other things, to create / retrieve a cache object or to delete one with the `caches.open` and` caches.delete` functions.
+The different caches are accessible through the `caches` variable from the Service Worker. It is the [CacheStorage API](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) which allows, among other things, to create / retrieve a cache object or to delete one with the `caches.open` and `caches.delete` functions.
 
 Finally, another interesting method of the cache is `match`: it checks in all `Cache` objects managed by the `CacheStorage` if a request is identical to that passed in parameter. If so, it returns a Promise resolved with the cached response.
 
@@ -25,6 +68,7 @@ We will cache the essential static files of the application as soon as possible.
 4. In order for the Service Worker to activate after precaching is complete, pass the `Promise` returned by `cache.addAll` as an argument to [`event.waitUntil ()`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil), `event` being the installation event.
 
 <Solution>
+
 ```js
 const CACHE_NAME = 'V1';
 const STATIC_CACHE_URLS = ['/', 'styles.css', 'scripts.js'];
@@ -37,6 +81,7 @@ self.addEventListener('install', event => {
   )
 });
 ```
+
 </Solution>
 
 Reload the page and the Service Worker, making sure that the new version of the Service Worker replaces the old one as seen in step 2. We can then check that the files are added to the cache by looking at the *Cache Storage section* in the *Application* tab of Chrome Developer Tools.
@@ -132,3 +177,8 @@ Once the PWA is installed, when you click on the shortcut, a splash screen is di
 You will also notice that the URL bar and the rest of the browser UI are no longer shown if you have set the `display` property to `standalone` in the manifest.
 
 ![PWA run from bookmark](./readme_assets/pwa-fullscreen.jpg)
+
+
+## Links
+
+[Comprendre les Promises en JavaScript / TypeScript](https://javascript.developpez.com/actu/146280/Comprendre-les-Promises-en-JavaScript-TypeScript-article-de-yahiko/)
