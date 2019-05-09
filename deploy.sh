@@ -8,6 +8,8 @@ npm run build
 
 # navigate into the build output directory
 cd .vuepress/dist
+# copy samples
+cp -v -r ../../samples .
 
 # if you are deploying to a custom domain
 echo 'pwa-workshop.js.org' > CNAME
