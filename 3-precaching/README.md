@@ -11,6 +11,8 @@ We saw in the previous step two methods of the Service Worker life cycle: `insta
 
 Service worker APIs rely heavily on promises. Let's take a quick look on how they work.
 
+_You can try the code in this section using node or an online editor such as (repl.it[https://repl.it/languages/nodejs]_
+
 Promises provide a way to transform an asynchronous function to an object which allows us to react when the function completes.
 The ES2015 allows to create promises using this constructor:
 
@@ -35,20 +37,87 @@ function someAsyncServiceWorlerFunction(){
 const promise = someAsyncServiceWorlerFunction();
 ```
 
-Once we create a promise object, it starts to execute asynchronously. We can use the `then()` and `reject()` functions to execute a function when the promises succeeds (it calls `resolve`) or fails (it calls `reject`).
-
-The following example illustrates a promise that generates a random number after a 3 seconds delay. It succeeds when the generated number is even and fails when the generated number is odd.
+Here is a more concrete example of a promise that generates a random number after a 1 second delay. It succeeds when the generated number is even and fails when the generated number is odd.
 
 ```javascript
-function generateRandomNumber(){
-  return new Promise((resolve, reject) => {
-  // async function execution
-  // resolve is called on success
-  // reject is called on failure
-  });
+function generateRandomNumber() {
+    return new Promise(function(resolve, reject) {
+        setTimeout(function () {
+            const nb = Math.floor(Math.random() * 10); // random number between 0 and 10
+            if (nb % 2 == 0) {
+                resolve(nb);
+            } else {
+                reject({message:"even number", number: nb});
+            }
+        }, 1000);
+    });
 }
-const promise = someAsyncServiceWorlerFunction();
 ```
+
+Once we create a promise object, it starts to execute asynchronously. We can use the `then()` and `reject()` functions to execute a function when the promises succeeds (it calls `resolve`) or fails (it calls `reject`).
+
+The following example illustrates how to handle the promise returned by the `generateRandomNumber()` function.
+
+```javascript
+const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
+promise.then(function (number) { // this function is called when the promise succeds
+    console.log(number);
+}).catch(function (error) { // this function is called when the promise fails
+    console.error(error);
+});
+console.log("Promise example"); // this message is shows first because the promise is async
+```
+
+We can abbreviate the promise call by extracting the `then` and `catch` handlers as functions.
+
+```javascript
+function handleSuccess(number) {
+    console.log(number);
+}
+function handleFailure(message) {
+    console.error(message);
+}
+generateRandomNumber().then(handleSuccess).catch(handleFailure);
+console.log("Promise example"); // this message is shows first because the promise is async
+```
+
+Promises can be easily chained. The following example generates a new random number asynchronously after the first one has been generated and printed.
+
+```javascript
+function handleSuccess(number) {
+    console.log(number);
+}
+function handleFailure(message) {
+    console.error(message);
+}
+generateRandomNumber().then(handleSuccess)
+  .then(generateRandomNumber).then(handleSuccess) // chain a second promise and handle is result
+  .catch(handleFailure); // if any of the prevous calls fails, catch is called
+console.log("Promise example"); // this message is shows first because the promise is async
+```
+
+There is alternative way of calling and chaining promises. Instead of calling the `then` function and pass it another function that processes the result. We can retrieve the result when it becomes is available without passing functions. This is called awaiting the result and uses the `async/await` keywords. With this method, the catch method is replaced by a `try/catch` block.
+
+The following code snippet transforms the lase example to use `async/await`.
+
+```javascript
+// If we want to use await, we must be place the code in async function
+// More reading https://github.com/tc39/proposal-top-level-await, https://gist.github.com/Rich-Harris/0b6f317657f5167663b493c722647221
+async function mainAsync(){
+    try{
+        const nb1 = await generateRandomNumberAsync(); // create the promise and wait for its result (the parameter passed to resolve) asynchrnously without blocking the javascirpt thread
+        console.log(nb1); // nb1 is not the promise but rather its result in case of success (the parameter passed to resolve)
+        const nb2 = await generateRandomNumberAsync(); // create the promise and wait for its result (the parameter passed to resolve) asynchrnously without blocking the javascirpt thread
+        console.log(nb2);
+    }catch(error){ // this catch block is executed if any promise fails
+        console.error(error); // The error object is the value passed to reject
+    }
+}
+mainAsync(); // call the function that runs async code
+console.log("Promise example with async / await");
+```
+
+This concludes this overview about promises and async/await
 
 ## Exploring caching APIs
 
