@@ -5,7 +5,89 @@ lang: en
 
 # Step 2 : Install a Service Worker
 
-[Service Worker](https://developers.google.com/web/fundamentals/primers/service-workers/) is a fairly large API with a lot of potential. In the context of a PWA, a Service Worker will mainly allow us to define a caching strategy and thus better manage unstable connections, or even get a complete offline mode for our application.
+Before delving into service workers, let's first understand what are web workers.
+
+## Introduction to Web workers
+
+As you may know, JavaScript is single threaded and does not allow the creation of threads.
+A web worker allows to execute code in a separate thread for general use.
+The code of the web worker generally resides in a separate JavaScript file that is loaded form the main JavaScript code.
+After creating the web worker, we have two JavaScript threads: the main JavaScript thread and the worker thread.
+Once the web worker is created, it can interact with the main JavaScript in a two-way fashion by using the postMessage function.
+
+Since the web worker has its own thread, it can perform process-heavy tasks without freezing the page.
+
+Here is a minimal web page that created a service worker and communicates with it.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="main.js"></script>
+    <title>Web worker example</title>
+</head>
+<body>
+    <button onclick="sendMessageToWorker()">Post message to worker</button>
+    <button onclick="askWorkerToPerformRecurringTask()">Launch recurring task</button>
+    <h3>Worker result</h3>
+    <div id="result"></div>
+</body>
+</html>
+```
+
+Here is the code of the main JavaScript that creates the worker and sends / receives  messages to / from it.
+
+```javascript
+// crate a worker whose code is defined in the file passed as parameter 
+const worker = new Worker("worker.js");
+function askWorkerToPerformRecurringTask(){
+    // post a sting to the worker
+    worker.postMessage("recurring");
+}
+function sendMessageToWorker(){
+    // post a sting to the worker
+    worker.postMessage("Hello World !");
+}
+// This event is fired when the worker posts a message
+// The value of the message is in messageEvent.data
+worker.addEventListener("message", function(messageEvent){
+    const div = document.getElementById("result");
+    // Log the received message on the top of the tag
+    div.innerHTML = messageEvent.data + "<br>" + div.innerHTML;
+});
+```
+
+Finally, here is the code of the web worker that reacts to the message recieved from the main JS by either posting back a single message or by posting a random number each second.
+
+```javascript
+// a function that generates a random number every second and posts it to the main JavaScript
+function generateNumbers(){
+    setInterval(function(){
+        // post a message to the main JavaScript
+        self.postMessage(Math.random());
+    }, 1000);
+}
+// This event is fired when the worker recieves a message from the main JavaScript
+// The value of the message is in messageEvent.data
+self.addEventListener("message", function(messageEvent){
+    if(messageEvent.data === "recurring"){
+        // If the value of the event is "recurring", we launch the above function
+        generateNumbers();
+    }else{
+        // Post a message back to the main JS
+        self.postMessage("Hello to you too !");
+    }
+});
+```
+
+This concludes this simple introduction to web workers. We can play with service workers next.
+
+## Service workers
+
+A [Service Worker](https://developers.google.com/web/fundamentals/primers/service-workers/) is a type of web worker that serve as a proxy between the browser and the network.
+It has a fairly large API with a lot of potential.
+In the context of a PWA, a Service Worker will mainly allow us to define a caching strategy and thus better manage unstable connections, or even get a complete offline mode for our application.
 
 What you should know about Service Workers:
 
@@ -37,7 +119,7 @@ if ('serviceWorker' in navigator) {
 
 Reload the page, the following log should appear in the console once the page loaded.
 
-```
+```Access log
 Service Worker registered: [object ServiceWorkerRegistration]
 ```
 
