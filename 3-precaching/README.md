@@ -37,7 +37,7 @@ function someAsyncServiceWorlerFunction(){
 const promise = someAsyncServiceWorlerFunction();
 ```
 
-Here is a more concrete example of a promise that generates a random number after a 1 second delay. It succeeds when the generated number is even and fails when the generated number is odd.
+Here is a more concrete example of a promise that generates a random number after a 1 second delay. It succeeds when the generated number is even and fails when the generated number is odd. 
 
 ```javascript
 function generateRandomNumber() {
@@ -56,7 +56,7 @@ function generateRandomNumber() {
 
 Once we create a promise object, it starts to execute asynchronously. We can use the `then()` and `reject()` functions to execute a function when the promises succeeds (it calls `resolve`) or fails (it calls `reject`).
 
-The following example illustrates how to handle the promise returned by the `generateRandomNumber()` function.
+The following example illustrates how to handle the promise returned by the `generateRandomNumber()` function. [Run online](https://repl.it/@yostane/promise01)
 
 ```javascript
 const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
@@ -68,7 +68,7 @@ promise.then(function (number) { // this function is called when the promise suc
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
-We can abbreviate the promise call by extracting the `then` and `catch` handlers as functions.
+We can abbreviate the promise call by extracting the `then` and `catch` handlers as functions. [Run online](https://repl.it/@yostane/promise02)
 
 ```javascript
 function handleSuccess(number) {
@@ -81,7 +81,7 @@ generateRandomNumber().then(handleSuccess).catch(handleFailure);
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
-Promises can be easily chained. The following example generates a new random number asynchronously after the first one has been generated and printed.
+Promises can be easily chained. The following example generates a new random number asynchronously after the first one has been generated and printed. [Run online](https://repl.it/@yostane/promise03)
 
 ```javascript
 function handleSuccess(number) {
@@ -96,9 +96,9 @@ generateRandomNumber().then(handleSuccess)
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
-There is alternative way of calling and chaining promises. Instead of calling the `then` function and pass it another function that processes the result. We can retrieve the result when it becomes is available without passing functions. This is called awaiting the result and uses the `async/await` keywords. With this method, the catch method is replaced by a `try/catch` block.
+There is alternative way for calling and chaining promises. Instead of calling the `then` function and pass it another function that processes the result. We can retrieve the result when it becomes is available without passing function. This is called awaiting the result and uses the `async/await` keywords. With this method, the catch method is replaced by a `try/catch` block.
 
-The following code snippet transforms the lase example to use `async/await`.
+The following code snippet transforms the last example to use `async/await`. [Run online](https://repl.it/@yostane/promise03)
 
 ```javascript
 // If we want to use await, we must be place the code in async function
@@ -117,7 +117,10 @@ mainAsync(); // call the function that runs async code
 console.log("Promise example with async / await");
 ```
 
-This concludes this overview about promises and async/await
+This concludes this overview about promises and async/await.
+With this knowledge acquired, we can use the caching APIs of the service worker more serenely.
+
+*If you still feel uncomfortable with promises, here are some exercices: [set 1](https://github.com/asakusuma/promise-workshop), [set 2](https://repl.it/@AdamCahan/Promise-practice-exercises), [set 3](https://developers.google.com/web/ilt/pwa/lab-promises)*
 
 ## Exploring caching APIs
 
