@@ -7,7 +7,7 @@ next: ./1-manifest/
 
 # PWA from scratch workshop
 
-![Logo](logo-192.png)
+![Logo](./logo-192.png)
 
 <SuggestLocale></SuggestLocale>
 
