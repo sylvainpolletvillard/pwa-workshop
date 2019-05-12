@@ -60,3 +60,5 @@ typings/
 # IDE
 .idea
 .vscode
+
+*.pem
