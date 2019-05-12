@@ -93,10 +93,20 @@ button {
     text-align: center;
 }
 
-.actions button:not([disabled]) {
+.actions button:not([disabled]),
+#setup_button {
     background-color: #5a0fc8;
     color: #eee;
     box-shadow: 0 0 15px #999;
+}
+
+#setup_button {
+    display: none;
+}
+
+#setup_button:disabled {
+    background-color: #858585;
+    color: rgb(31, 31, 31);
 }
 
 .flex {

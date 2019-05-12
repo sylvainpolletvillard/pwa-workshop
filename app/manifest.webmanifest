@@ -5,8 +5,8 @@
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#c6acee",
-  "icons": [
-    {
+  "prefer_related_applications": false,
+  "icons": [{
       "src": "icons/logo_192.png",
       "sizes": "192x192"
     },
