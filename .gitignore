@@ -60,3 +60,6 @@ typings/
 # IDE
 .idea
 .vscode
+
+# certificates
+*.pem

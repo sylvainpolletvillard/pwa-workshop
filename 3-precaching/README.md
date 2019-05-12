@@ -11,7 +11,7 @@ We saw in the previous step two methods of the Service Worker life cycle: `insta
 
 Service worker APIs rely heavily on promises. Let's take a quick look on how they work.
 
-_You can try the code in this section using node or an online editor such as (repl.it[https://repl.it/languages/nodejs]_
+_You can try the code in this section using node or an online editor such as [https://repl.it](https://repl.it/languages/nodejs)_
 
 Promises provide a way to transform an asynchronous function to an object which allows us to react when the function completes.
 The ES2015 allows to create promises using this constructor:
@@ -47,7 +47,7 @@ function generateRandomNumber() {
             if (nb % 2 == 0) {
                 resolve(nb);
             } else {
-                reject({message:"even number", number: nb});
+                reject({message:"odd number", number: nb});
             }
         }, 1000);
     });
@@ -98,7 +98,7 @@ console.log("Promise example"); // this message is shows first because the promi
 
 There is alternative way for calling and chaining promises. Instead of calling the `then` function and pass it another function that processes the result. We can retrieve the result when it becomes is available without passing function. This is called awaiting the result and uses the `async/await` keywords. With this method, the catch method is replaced by a `try/catch` block.
 
-The following code snippet transforms the last example to use `async/await`. [Run online](https://repl.it/@yostane/promise03)
+The following code snippet transforms the last example to use `async/await`. [Run online](https://repl.it/@yostane/promise04)
 
 ```javascript
 // If we want to use await, we must be place the code in async function

@@ -168,7 +168,7 @@ Service Worker activating.
 
 When we refresh the page without modifying the Service Worker, we notice that we no longer go through the installation and activation steps.
 
-This behaviour is necessary to manage version upgrades in production. In practice, you will write code in the Service Worker that manages this update process and call `skipWaiting` programmatically once everything is set up correctly. 
+This behavior is necessary to manage version upgrades in production. In practice, you will write code in the Service Worker that manages this update process and call `skipWaiting` programmatically once everything is set up correctly.
 
 During development, we will keep things simple by ticking the checkbox **Update on reload**. This option will immediately activate future new Service Workers. It's an equivalent of an automatic click on **skipWaiting** each time.
 
@@ -180,4 +180,56 @@ Enable the **Update on reload** option when working on the code of a Service Wor
 However, this option will install and activate the Service Worker **before** displaying the page, so you won't see the logs associated with these events in console.
 :::
 
-In this part, we saw how to install a Service Worker, and how to managetwo Service Worker lifecycle events: **install** and **activate**. Now, let's see how to do something useful with this Service Worker.
+## PWA compatibility library
+
+Progressive Web Apps is a new and evolving technology.
+Some browsers do not support yet some PWA features. For example, there is not splash-screen support in mobile Safari 12.
+[pwacomat](https://github.com/GoogleChromeLabs/pwacompat) from Google Chrome Labs fixes this by simply adding a script tag in the html file.
+
+```html
+<script async src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.8/pwacompat.min.js"
+    integrity="sha384-uONtBTCBzHKF84F6XvyC8S0gL8HTkAPeCyBNvfLfsqHh+Kd6s/kaS4BdmNQ5ktp1"
+    crossorigin="anonymous"></script>
+```
+
+We strongly recommend to add this script for your PWAs for better compatibility.
+
+## Local development with SSL
+
+PWA requires HTTPS fully function. This not a big matter for a deployed PWA because most web hosts provide HTTPS out of the box. However, it is not the case for local development. In fact, it requires manually generating and installing certificates to the certificate store. Fortunately, there is a cool CLI tool called [mkcert](https://mkcert.dev/) that simplifies these steps.
+
+Let's setup our local HTTPS server by following these steps:
+
+* Install [mkcert](https://github.com/FiloSottile/mkcert#installation) as indicated in its GitHub page
+* Run `mkcert -install` to install a local CA (Certification authority)
+
+```console
+Created a new local CA at "/Users/****/Library/Application Support/mkcert" 💥
+The local CA is now installed in the system trust store! ⚡️
+The local CA is now installed in the Firefox trust store (requires browser restart)! 🦊
+```
+
+* cd to the website root
+* Run this command that generated certificated for our server: `mkcert localhost 127.0.0.1`
+
+```console
+Using the local CA at "/Users/****yassinebenabbas****/Library/Application Support/mkcert" ✨
+
+Created a new certificate valid for the following names 📜
+ - "localhost"
+ - "127.0.0.1"
+ - "::1"
+
+The certificate is at "./localhost+2.pem" and the key at "./localhost+2-key.pem" ✅
+```
+
+* We will get two pem files. These will be used by our SSL enabled dev server.
+
+![certs](./readme_assets/certs.png)
+
+* Install npm package `http-server`
+* Run the server in SSL mode `http-server -S -o -C "localhost+2.pem" -K "localhost+2-key.pem"`
+
+![certs](./readme_assets/certok.png)
+
+In this part, we saw how to install a Service Worker, and how to manage two Service Worker lifecycle events: **install** and **activate**. Now, let's see how to do something useful with this Service Worker.

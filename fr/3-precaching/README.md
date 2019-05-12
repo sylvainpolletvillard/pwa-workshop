@@ -7,6 +7,126 @@ lang: fr
 
 On a vu dans l'étape précédent deux méthodes du cycle de vie d'un Service Worker: `install` et `activate`. Dans cette partie, on va poursuivre notre exploration des PWA en mettant en cache les fichiers statiques.
 
+We saw in the previous step two methods of the Service Worker life cycle: `install` and` activate`. In this part, we will continue our exploration of PWA by caching static files.
+
+## Vue d'ensemble des promesses et async / wait
+
+Les API de service worker reposent largement sur des promesses. Jetons un coup d'œil sur leur fonctionnement.
+
+_Vous pouvez essayer le code de cette section en utilisant node ou un éditeur en ligne tel que [https://repl.it](https://repl.it/languages/nodejs)_
+
+Les promesses offrent un moyen de transformer une fonction asynchrone en objet, ce qui nous permet de réagir lorsque la fonction est terminée.
+La norme ES2015 permet de créer des promesses à l'aide de ce constructeur:
+
+```javascript
+const promise = new Promise((resolve, reject) => {
+  // async function execution
+  // resolve is called on success
+  // reject is called on failure
+});
+```
+
+Toutefois, nous n'utiliserons pas ce type de constructeur car les API du Service Worker ont des fonctions qui renvoient une `Promise`, comme l'illustre l'exemple suivant:
+
+```javascript
+// Fonction qui ne fait que retourner une promesse
+function someAsyncServiceWorlerFunction(){
+  return new Promise((resolve, reject) => {
+    // code de la promesse
+  });
+}
+const promise = someAsyncServiceWorlerFunction();
+```
+
+Voici un exemple plus concret d’une `Promise` qui génère un nombre aléatoire après un délai de 1 seconde. Il réussit lorsque le nombre généré est pair et échoue lorsque le nombre généré est impair.
+
+```javascript
+function generateRandomNumber() {
+    return new Promise(function(resolve, reject) {
+        setTimeout(function () {
+            const nb = Math.floor(Math.random() * 10); // random number between 0 and 10
+            if (nb % 2 == 0) {
+                resolve(nb);
+            } else {
+                reject({message:"odd number", number: nb});
+            }
+        }, 1000);
+    });
+}
+```
+
+Une fois que nous avons créé un objet de promesse, il commence à s'exécuter de manière asynchrone.
+
+Nous pouvons utiliser par la suite les fonctions `then()` et `catch()` pour exécuter une fonction lorsque la `Promise` réussit (elle a appelé `resolve`) ou échoue (elle a appelé `reject`).
+
+L'exemple suivant montre comment gérer la promesse renvoyée par la fonction `generateRandomNumber ()`. [Exécuter en ligne](https://repl.it/@yostane/promise01)
+
+```javascript
+const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
+promise.then(function (number) { // this function is called when the promise succeds
+    console.log(number);
+}).catch(function (error) { // this function is called when the promise fails
+    console.error(error);
+});
+console.log("Promise example"); // this message is shows first because the promise is async
+```
+
+Nous pouvons rendre le code un peu plus lisible en passant des fonctions à `then` et `catch` au lieu de définir des fonctions anonymes. [Exécuter en ligne](https://repl.it/@yostane/promise02)
+
+```javascript
+function handleSuccess(number) {
+    console.log(number);
+}
+function handleFailure(message) {
+    console.error(message);
+}
+generateRandomNumber().then(handleSuccess).catch(handleFailure);
+console.log("Promise example"); // this message is shows first because the promise is async
+```
+
+Les promesses peuvent être facilement chaînées. L'exemple suivant génère un nouveau nombre aléatoire de manière asynchrone si la première `Promise` réussit. [Exécuter en ligne](https://repl.it/@yostane/promise03)
+
+```javascript
+function handleSuccess(number) {
+    console.log(number);
+}
+function handleFailure(message) {
+    console.error(message);
+}
+generateRandomNumber().then(handleSuccess)
+  .then(generateRandomNumber).then(handleSuccess) // chain a second promise and handle is result
+  .catch(handleFailure); // if any of the prevous calls fails, catch is called
+console.log("Promise example"); // this message is shows first because the promise is async
+```
+
+Il existe un autre moyen d'appeler et d'enchaîner les promesses.
+Au lieu de chainer les appels de `then`, on peut récupérer le résultat quand il devient disponible dans une variable.
+Ceci est appelé _une attente du résultat_ ou **await** et ce fait en utilisant les mots-clés `async / wait`. Avec cette méthode, la méthode `catch` est remplacée par un bloc `try / catch`.
+
+L'extrait de code suivant transforme le dernier exemple en utilisant `async / wait`. [Exécuter en ligne](https://repl.it/@yostane/promise04)
+
+```javascript
+// If we want to use await, we must be place the code in async function
+// More reading https://github.com/tc39/proposal-top-level-await, https://gist.github.com/Rich-Harris/0b6f317657f5167663b493c722647221
+async function mainAsync(){
+    try{
+        const nb1 = await generateRandomNumberAsync(); // create the promise and wait for its result (the parameter passed to resolve) asynchrnously without blocking the javascirpt thread
+        console.log(nb1); // nb1 is not the promise but rather its result in case of success (the parameter passed to resolve)
+        const nb2 = await generateRandomNumberAsync(); // create the promise and wait for its result (the parameter passed to resolve) asynchrnously without blocking the javascirpt thread
+        console.log(nb2);
+    }catch(error){ // this catch block is executed if any promise fails
+        console.error(error); // The error object is the value passed to reject
+    }
+}
+mainAsync(); // call the function that runs async code
+console.log("Promise example with async / await");
+```
+
+Ceci conclut cet aperçu sur les promesses et async/wait.
+Avec cette connaissance acquise, nous pouvons utiliser les API de mise en cache du service worker plus sereinement.
+
+_Voici en bonus quelques exercices supplémentaires: [série 1](https://github.com/asakusuma/promise-workshop), [série 2](https://repl.it/@AdamCahan/Promise-practice-exercices) et [série 3](https://developers.google.com/web/ilt/pwa/lab-promises)_
+
 ## Exploration des API de mise en cache
 
 Parmi les [API auquel a accès le Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), celle qui nous intéresse est [l'API Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache). En effet, elle permet de mettre dans un cache persistant les paires Requêtes/Réponses via la méthode `cache.put(request, response)`. Il est également possible de passer une ou plusieurs URL en argument des méthodes `add` et `addAll` ; elles seront requêtées et la réponse sera ajoutée au cache. On peut également supprimer des entrées du cache avec la méthode `delete`.

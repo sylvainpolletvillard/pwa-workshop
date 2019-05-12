@@ -1,12 +1,28 @@
 module.exports = {
 	base: '/',
+	port: '7999',
 	serviceWorker: true,
 	head: [
-		['link', { rel: 'manifest', href: 'manifest.json' }],
-		['meta', { name: "mobile-web-app-capable", content: "yes" }],
-		['meta', { name: "apple-mobile-web-app-capable", content: "yes" }],
-		['meta', { name: "application-name", content: "PWA Workshop Docs" }],
-		['meta', { name: "apple-mobile-web-app-title", content: "PWA Workshop Docs" }]
+		['link', {
+			rel: 'manifest',
+			href: 'manifest.json'
+		}],
+		['meta', {
+			name: "mobile-web-app-capable",
+			content: "yes"
+		}],
+		['meta', {
+			name: "apple-mobile-web-app-capable",
+			content: "yes"
+		}],
+		['meta', {
+			name: "application-name",
+			content: "PWA Workshop Docs"
+		}],
+		['meta', {
+			name: "apple-mobile-web-app-title",
+			content: "PWA Workshop Docs"
+		}]
 	],
 	locales: {
 		'/': {
@@ -36,6 +52,7 @@ module.exports = {
 					'/3-precaching/',
 					'/4-api-cache/',
 					'/5-background-sync/',
+					'/6-pwa-setup/',
 					'/finish'
 				]
 			},
@@ -50,13 +67,19 @@ module.exports = {
 					'/fr/3-precaching/',
 					'/fr/4-api-cache/',
 					'/fr/5-background-sync/',
+					'/fr/6-pwa-setup/',
 					'/fr/finish'
 				]
 			}
 		},
-		nav: [
-			{ text: 'Cookbook', link: 'https://pwa-cookbook.js.org' },
-			{ text: 'Github', link: 'https://github.com/sylvainpolletvillard/pwa-workshop' }
+		nav: [{
+				text: 'Cookbook',
+				link: 'https://pwa-cookbook.js.org'
+			},
+			{
+				text: 'Github',
+				link: 'https://github.com/sylvainpolletvillard/pwa-workshop'
+			}
 		]
 	}
 }

@@ -5,7 +5,7 @@ lang: en
 
 # Step 5 : Background sync and notifications
 
-To conclude this workshop, we will use the Service Worker and a new API, **Background Sync**, to update the list of attendees in the background and notify the user when there are new attendees.
+In this step, we will use the Service Worker and a new API, **Background Sync**, to update the list of attendees in the background and notify the user when there are new attendees.
 
 ::: danger Non-standard
 The Background Sync API is not yet standardized. The [specification](https://wicg.github.io/BackgroundSync/spec/) is still under study. It has already been implemented on Chrome and Android since 2016, and is under development on Edge and Firefox. This API distinguishes two types of synchronization: * One-Time * and * Periodic *. Currently, only **One-Time** synchronization is implemented in Chrome, and there may be some implementation bugs.
