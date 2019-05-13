@@ -15,7 +15,7 @@ La présence d'un manifeste procure également d'autres avantages. En voici quel
 
 * Il permet à certains navigateurs d'ajouter au bureau ou à l'écran d'accueil un raccourci vers la PWA
 * Il permet à la PWA d'être référencée sur certains apps stores tels que le [Windows Store](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps).
-* Il permet d'afficher la PWA en plein écran, sans UI navigateur, avec un écran initial (splashscreen) lors de l'ouverture de la PWA
+* Il permet d'afficher la PWA en plein écran, sans UI navigateur, avec un écran de lancement initial (splashscreen) lors de l'ouverture de la PWA
 
 ## Propriétés du manifeste
 
@@ -26,18 +26,18 @@ Le manifeste est un fichier JSON contient plusieurs champs. Il est recommandé d
 * `description ` —  une description générale de l'application
 * `start_url ` — l'URL qui est chargée en premier quand on ouvre l'application depuis son raccourci sur le bureau ou l'écran d'accueil
 * `scope`  —  les pages du site faisant partie de l'expérience PWA. La valeur `"."` inclue tout ce qui se situe dans l'arborescence de manifeste. Il est donc plus pertinent de placer ce dernier à la racine du site
-* `background_color `—   La couleur d'arrière-plan du splashscreen
+* `background_color `—   La couleur d'arrière-plan du splash-screen
 * `theme_color ` —  la couleur de thème général de l'application, utilisée notamment dans les barres de statut si elles sont affichées
 * `display `—   spécifie le mode d'affichage. Voici les différents modes disponibles triés par ordre de fallback :
   * `fullscreen`: toute la zone d'affichage disponible est utilisée et aucun agent utilisateur n'est montré.
-  * `standalone`: comportement similaire a une application native. Cela peut signifier que l'application a sa propre fenêtre, sa propre icône dans le lanceur d'applications, etc. Dans ce mode, l'agent utilisateur va exclure les élements d'interface qui permettent de contrôler la navigation mais peut inclure d'autres éléments comme une barre de statut par exemple.
+  * `standalone`: comportement similaire a une application native. Cela peut signifier que l'application a sa propre fenêtre, sa propre icône dans le lanceur d'applications, etc. Dans ce mode, l'agent utilisateur va exclure les éléments d'interface qui permettent de contrôler la navigation mais peut inclure d'autres éléments comme une barre de statut par exemple.
   * `minimal-ui`: l'application va ressembler et se comporter comme une application autonome, mais elle aura quelques élements d'interface permettant de contrôler la navigation. Les éléments varient en fonction du navigateur et du système.
   * `browser` (par défaut): l'application s'ouvre dans un nouvel onglet ou une nouvelle fenêtre du navigateur, en fonction du navigateur et de la plateforme
 * `orientation`  —  pour forcer ou encourager une orientation particulière pour les appareils mobiles: `any`, `natural`, `landscape`, `portrait`...
 * `dir`  —  le sens de lecture du texte: `ltr`, `rtl` ou `auto`.
 * `lang`  —  la langue principale de l'application.
 * `related_applications`  — indique des liens vers des applications natives installables sur la plate-forme sous-jacente, et pouvant constituer une alternative ou un complément à la PWA ; par exemple une version native de l'application web. A ignorer s'il n'y a pas d'application native.
-* `icons ` —  liste d'icônes de l'application de différentes résolutions, utilisées notamment pour le raccourci et le splashscreen. Les tailles à fournir recommandées sont a minima 192x192px et 512x512px. L'appareil choisira la meilleure icone automatiquement selon les cas. Il est également intéressant de fournir en fallback une version vectorielle SVG de l'icône qui s'adaptera à un maximum de tailles.
+* `icons ` —  liste d'icônes de l'application de différentes résolutions, utilisées notamment pour le raccourci et le splashscreen. Les tailles à fournir recommandées sont a minima 192x192px et 512x512px. L'appareil choisira la meilleure icône automatiquement selon les cas. Il est également intéressant de fournir en fallback une version vectorielle SVG de l'icône qui s'adaptera à un maximum de tailles.
 
 ## Utilisation d'un générateur de manifeste
 

@@ -37,7 +37,7 @@ function someAsyncServiceWorlerFunction(){
 const promise = someAsyncServiceWorlerFunction();
 ```
 
-Here is a more concrete example of a promise that generates a random number after a 1 second delay. It succeeds when the generated number is even and fails when the generated number is odd. 
+Here is a more concrete example of a promise that generates a random number after a 1 second delay. It succeeds when the generated number is even and fails when the generated number is odd.
 
 ```javascript
 function generateRandomNumber() {
