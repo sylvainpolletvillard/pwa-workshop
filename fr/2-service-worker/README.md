@@ -213,7 +213,7 @@ The local CA is now installed in the Firefox trust store (requires browser resta
 ```
 
 * cd jusqu'à la racine du site
-* Lancer cette commande qui génère les certificats pour notre serveur de dev: `mkcert localhost 127.0.0.1`
+* Lancer cette commande qui génère les certificats pour notre serveur de dev: `mkcert localhost 127.0.0.1 ::1`
 
 ```console
 Using the local CA at "/Users/****yassinebenabbas****/Library/Application Support/mkcert" ✨
