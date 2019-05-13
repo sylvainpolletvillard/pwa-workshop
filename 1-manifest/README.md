@@ -95,4 +95,4 @@ Note that other metadata are also used by some browsers and may be useful. It is
 
 You can check that the manifest is retrieved correctly by looking in the _Applications_ tab of Chrome Developer Tools. The list of manifest properties should be displayed.
 
-![Manifest dev tools](../../1-manifest/readme_assets/manifest_dev_tools.png)
+![Manifest dev tools](./readme_assets/manifest_dev_tools.png)
