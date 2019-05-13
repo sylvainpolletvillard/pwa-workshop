@@ -1,0 +1,4 @@
+[submodule "./.vuepress/dist"]
+	path = ./.vuepress/dist
+	url = https://github.com/sylvainpolletvillard/pwa-workshop
+	branch = gh-pages
