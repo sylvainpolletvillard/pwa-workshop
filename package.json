@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vuepress dev",
     "build": "vuepress build",
-    "deploy": "deploy.sh"
+    "deploy": "node ./deploy.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/sylvainpolletvillard/pwa-workshop#readme",
   "license": "MIT",
   "devDependencies": {
+    "shelljs": "^0.8.3",
     "vuepress": "^1.0.0"
   }
 }
