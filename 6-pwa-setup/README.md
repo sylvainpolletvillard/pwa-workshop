@@ -98,9 +98,9 @@ window.addEventListener('appinstalled', (evt) => {
 
 Now's the time to test. Don't hesitate to reload the page by clearing the cache. In macOS, the shortcut is **⇧⌘R**
 
-![PWA install button](readme_assets/pwa_setup_button.png)
-![PWA install prompt](readme_assets/pwa_setup_prompt.png)
+![PWA install button](./readme_assets/pwa_setup_button.png)
+![PWA install prompt](./readme_assets/pwa_setup_prompt.png)
 
 Here is how an installed PWA looks on macOS
 
-![PWA installed](readme_assets/pwa_installed.png)
+![PWA installed](./readme_assets/pwa_installed.png)
