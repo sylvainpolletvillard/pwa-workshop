@@ -93,7 +93,7 @@ function handleFailure(message) {
 }
 generateRandomNumber().then(handleSuccess)
   .then(generateRandomNumber).then(handleSuccess) // chain a second promise and handle is result
-  .catch(handleFailure); // if any of the prevous calls fails, catch is called
+  .catch(handleFailure); // if any of the previous calls fails, catch is called
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
@@ -123,7 +123,7 @@ console.log("Promise example with async / await");
 Ceci conclut cet aperçu sur les promesses et async/wait.
 Avec cette connaissance acquise, nous pouvons utiliser les API de mise en cache du service worker plus sereinement.
 
-_Voici en bonus quelques exercices supplémentaires: [série 1](https://github.com/asakusuma/promise-workshop), [série 2](https://repl.it/@AdamCahan/Promise-practice-exercices) et [série 3](https://developers.google.com/web/ilt/pwa/lab-promises)_
+_Voici en bonus quelques exercices supplémentaires: [série 1](https://github.com/asakusuma/promise-workshop), [série 2](https://repl.it/@AdamCahan/Promise-practice-exercises) et [série 3](https://developers.google.com/web/ilt/pwa/lab-promises)_
 
 ## Exploration des API de mise en cache
 

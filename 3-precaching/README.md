@@ -92,7 +92,7 @@ function handleFailure(message) {
 }
 generateRandomNumber().then(handleSuccess)
   .then(generateRandomNumber).then(handleSuccess) // chain a second promise and handle is result
-  .catch(handleFailure); // if any of the prevous calls fails, catch is called
+  .catch(handleFailure); // if any of the previous calls fails, catch is called
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
