@@ -7,8 +7,6 @@ lang: fr
 
 On a vu dans l'étape précédent deux méthodes du cycle de vie d'un Service Worker: `install` et `activate`. Dans cette partie, on va poursuivre notre exploration des PWA en mettant en cache les fichiers statiques.
 
-We saw in the previous step two methods of the Service Worker life cycle: `install` and` activate`. In this part, we will continue our exploration of PWA by caching static files.
-
 ## Vue d'ensemble des promesses et async / wait
 
 Les API de service worker reposent largement sur des promesses. Jetons un coup d'œil sur leur fonctionnement.
@@ -95,7 +93,7 @@ function handleFailure(message) {
 }
 generateRandomNumber().then(handleSuccess)
   .then(generateRandomNumber).then(handleSuccess) // chain a second promise and handle is result
-  .catch(handleFailure); // if any of the prevous calls fails, catch is called
+  .catch(handleFailure); // if any of the previous calls fails, catch is called
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
@@ -125,7 +123,7 @@ console.log("Promise example with async / await");
 Ceci conclut cet aperçu sur les promesses et async/wait.
 Avec cette connaissance acquise, nous pouvons utiliser les API de mise en cache du service worker plus sereinement.
 
-_Voici en bonus quelques exercices supplémentaires: [série 1](https://github.com/asakusuma/promise-workshop), [série 2](https://repl.it/@AdamCahan/Promise-practice-exercices) et [série 3](https://developers.google.com/web/ilt/pwa/lab-promises)_
+_Voici en bonus quelques exercices supplémentaires: [série 1](https://github.com/asakusuma/promise-workshop), [série 2](https://repl.it/@AdamCahan/Promise-practice-exercises) et [série 3](https://developers.google.com/web/ilt/pwa/lab-promises)_
 
 ## Exploration des API de mise en cache
 
