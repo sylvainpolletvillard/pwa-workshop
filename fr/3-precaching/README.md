@@ -7,8 +7,6 @@ lang: fr
 
 On a vu dans l'étape précédent deux méthodes du cycle de vie d'un Service Worker: `install` et `activate`. Dans cette partie, on va poursuivre notre exploration des PWA en mettant en cache les fichiers statiques.
 
-We saw in the previous step two methods of the Service Worker life cycle: `install` and` activate`. In this part, we will continue our exploration of PWA by caching static files.
-
 ## Vue d'ensemble des promesses et async / wait
 
 Les API de service worker reposent largement sur des promesses. Jetons un coup d'œil sur leur fonctionnement.
