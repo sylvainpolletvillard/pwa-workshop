@@ -19,8 +19,8 @@ We will transform together a classic web application into a PWA. This will enabl
 
 - Basic knowledge of HTML, CSS and JavaScript. Understanding Promises and asynchronicity in JS can be a plus.
 - A computer with a **code editor** such as [Visual Studio Code](https://code.visualstudio.com/)
-- **Google Chrome** (*PWA are supported on most browsers but to facilitate the organization of the workshop, we will all use the same browser during development*)
-- A **local web server** (if you don't have any, try [npmjs.com/serve](http://npmjs.com/serve) with `cd app && serve`)
+- **Google Chrome** (_PWA are supported on most browsers but to facilitate the organization of the workshop, we will all use the same browser during development_)
+- A **local web server** (if you don't have any, try [npmjs.com/http-server](http://npmjs.com/http-server) with `cd app && http-server`)
 
 ## Preparation
 

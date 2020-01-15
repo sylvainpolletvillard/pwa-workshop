@@ -9,13 +9,13 @@ body {
 }
 
 header {
-  background-color: #c6acee;
+  background-color: pink;
   background-image: url("icons/logo.svg");
   background-size: auto 90%;
   background-position: center right 1em;
   background-repeat: no-repeat;
-  color: #eee;
   font-size: 1.4rem;
+  border-bottom: 1px solid #ccc;
 }
 
 header,
@@ -86,17 +86,16 @@ form input {
 button {
   font-size: 1.4rem;
   font-family: "Montserrat", sans-serif;
+  padding: 0.25em 0.5em;
+}
+
+button:not([disabled]) {
+  cursor: pointer;
 }
 
 .actions {
-  margin: 1em;
+  margin-top: 1em;
   text-align: center;
-}
-
-.actions button:not([disabled]) {
-  background-color: #5a0fc8;
-  color: #eee;
-  box-shadow: 0 0 15px #999;
 }
 
 .flex {
@@ -113,7 +112,7 @@ button {
 
 #register form {
   background-color: #f6f6f0;
-  padding: 0.5em 1em;
+  padding: 1em;
   margin-right: 1em;
 }
 

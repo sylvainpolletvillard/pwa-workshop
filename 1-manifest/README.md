@@ -44,7 +44,19 @@ Since the application manifest is a text file, you can choose to write it by han
 - [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/)
 - [Web App Manifest Generator](https://tomitm.github.io/appmanifest/).
 
-Using one of these tools, generate a manifest file for the app. Your manifest should at least contain the following properties: `name`,`short_name`, `lang`,`start_url`, `display: 'standalone'`, `theme_color` and `icons` with at least two PNG icons and one SVG at the recommended sizes. You can find example icons in the `app/icons` folder.
+Using one of these tools, generate a manifest file for the app. Your manifest should at least contain the following properties: `name`,`short_name`, `lang`,`start_url`, `display: 'standalone'`, `theme_color` and `icons` with at least two PNG icons sized 192x192px and 512x512px and one SVG version.
+
+Here are some examples of online tools to make these icons:
+
+- [Method Draw](https://editor.method.ac/)
+- [SVG Editor: Vector Paint](http://vectorpaint.yaks.co.nz/)
+- [Googel drawings](https://docs.google.com/drawings/)
+
+::: tip
+
+To save time, you can find example icons with the required dimensions in the `app/icons` folder.
+
+:::
 
 The manifest can then be saved in a text file called `manifest.json` in the app root folder.
 
@@ -56,7 +68,7 @@ The manifest can then be saved in a text file called `manifest.json` in the app 
   "lang": "fr",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#c6acee",
+  "theme_color": "pink",
   "icons": [
     {
       "src": "icons/logo-192.png",
@@ -77,18 +89,21 @@ The manifest can then be saved in a text file called `manifest.json` in the app 
 
 ## Adding the manifest in the application
 
-The last step is to reference the manifest in the HTML page of our application, using a `link` tag  in the `<head>` section : `<link rel="manifest" href="manifest.json">`.
+The last step is to reference the manifest in the HTML page of our application, using a `link` tag in the `<head>` section : `<link rel="manifest" href="manifest.json">`.
 
 Note that other metadata are also used by some browsers and may be useful. It is likely that in the future, these metadata will tend to disappear in favor of new fields in the web app manifest. Here is an example:
 
 ```html
-<link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="application-name" content="PWA Workshop">
-<meta name="apple-mobile-web-app-title" content="PWA Workshop">
-<meta name="msapplication-starturl" content="/index.html">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="manifest" href="manifest.json" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="PWA Workshop" />
+<meta name="apple-mobile-web-app-title" content="PWA Workshop" />
+<meta name="msapplication-starturl" content="/index.html" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
 ```
 
 ## Testing
@@ -96,3 +111,8 @@ Note that other metadata are also used by some browsers and may be useful. It is
 You can check that the manifest is retrieved correctly by looking in the _Applications_ tab of Chrome Developer Tools. The list of manifest properties should be displayed.
 
 ![Manifest dev tools](./readme_assets/manifest_dev_tools.png)
+
+## PWA compatibility library
+
+Some browsers do not support yet some PWA features. For example, there is not splash-screen support in mobile Safari 12. The library
+[pwacompat](https://github.com/GoogleChromeLabs/pwacompat) by Google Chrome Labs fixes some of these issues. We strongly recommend to add this script for your PWAs for better compatibility.
