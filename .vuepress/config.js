@@ -51,8 +51,8 @@ module.exports = {
 					'/2-service-worker/',
 					'/3-precaching/',
 					'/4-api-cache/',
-					'/5-background-sync/',
-					'/6-pwa-setup/',
+					'/5-pwa-install/',
+					'/6-background-sync/',
 					'/finish'
 				]
 			},
@@ -66,20 +66,20 @@ module.exports = {
 					'/fr/2-service-worker/',
 					'/fr/3-precaching/',
 					'/fr/4-api-cache/',
-					'/fr/5-background-sync/',
-					'/fr/6-pwa-setup/',
+					'/fr/5-pwa-install/',
+					'/fr/6-background-sync/',
 					'/fr/finish'
 				]
 			}
 		},
 		nav: [{
-				text: 'Cookbook',
-				link: 'https://pwa-cookbook.js.org'
-			},
-			{
-				text: 'Github',
-				link: 'https://github.com/sylvainpolletvillard/pwa-workshop'
-			}
+			text: 'Cookbook',
+			link: 'https://pwa-cookbook.js.org'
+		},
+		{
+			text: 'Github',
+			link: 'https://github.com/sylvainpolletvillard/pwa-workshop'
+		}
 		]
 	}
 }

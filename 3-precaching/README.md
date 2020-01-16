@@ -131,7 +131,7 @@ The different caches are accessible through the `caches` variable from the Servi
 
 Finally, another interesting method of the cache is `match`: it checks in all `Cache` objects managed by the `CacheStorage` if a request is identical to that passed in parameter. If so, it returns a Promise resolved with the cached response.
 
-## Adding static files to the cache
+## Precaching critical static files
 
 We will cache the essential static files of the application as soon as possible. The best timing to do this is when the `install` event is triggered, because it is only called once at Service Worker installation. This is called _precaching_.
 
@@ -199,7 +199,61 @@ self.addEventListener("fetch", event => {
 
 If everything has been done correctly, you should now be able to test the application in offline mode. Shut down your local server and try to reload the application. The cached page should be displayed.
 
-## Update the static cache
+## Put files in cache automatically
+
+When offline, some non-essential static files can not be downloaded and have not been put in cache ; for example, the PWA logo in the header. Let's change our service worker code to put these files in cache automatically, without using precaching at install.
+
+1. Add this `cache` function below in the Service Worker code:
+
+```js
+function cache(request, response) {
+  if (response.type === "error" || response.type === "opaque") {
+    return Promise.resolve(); // do not put in cache network errors
+  }
+
+  return caches
+    .open(CACHE_NAME)
+    .then(cache => cache.put(request, response.clone()));
+}
+```
+
+::: warning Warning
+An answer can only be read once, so it must be cloned with the `.clone()` method before caching it.
+:::
+
+2. In `fetch` event callback, add another `then` instruction after fetching network, then call the function `cache` declared before with the request and its response to put them in cache.
+
+3. Add one last `then` instruction to make sure the promise resolves with the network response as final value, as required by the `event.respondWith` function.
+
+<Solution>
+
+```js
+self.addEventListener("fetch", event => {
+  // Cache-First Strategy
+  event.respondWith(
+    caches
+      .match(event.request) // check if the request has already been cached
+      .then(cached => cached || fetch(event.request)) // otherwise request network
+      .then(
+        response =>
+          cache(event.request, response) // put response in cache
+            .then(() => response) // resolve promise with the network response
+      )
+  );
+});
+```
+
+</Solution>
+
+To test automatic cache, go back online and reload the app to put in cache the PWA logo. Check with the _DevTools_ that it is correctly added to the cache, then go back offline and try to load this logo without any Internet connection.
+
+::: tip
+
+Files loaded from an external domain that does not allow CORS requests, like the attendees pictures taken from Amazon and the font taken from Google, cannot be put in cache like the other static files. You will have to host these files on your domain or configure CORS on the external domain to be allowed to cache those.
+
+:::
+
+## Cache updates
 
 Caching static files raises a question: what happens if I add, delete, or modify these files on the server ?
 
@@ -238,30 +292,3 @@ self.addEventListener("activate", event => {
 </Solution>
 
 ![Flowsheet](./readme_assets/schema.png)
-
-## Installing the PWA
-
-Depending on the browser and OS, the technical requirements to install the PWA on the system may vary. But in theory, if you have a manifest and an active Service Worker handling incoming requests with `fetch`, then you should be able to install that PWA on all supported platforms, and they will leverage the manifest and Service Worker.
-
-The platform with the best support today is **Android**. If you have an Android smartphone that can connect to your server by sharing a local connection, then try to load the app through Chrome for Android. Once the web page is open, the Chrome menu should include the option: **Add to home screen**
-
-![Add to home screen](./readme_assets/pwa_install_menu.jpg)
-
-Continue the installation. A new shortcut should appear in your phone home screen. This is the shortcut to our PWA!
-
-![PWA bookmark](./readme_assets/pwa_install.jpg)
-![Splash-screen](./readme_assets/splash-screen.jpg)
-
-Once the PWA is installed, when you click on the shortcut, a splash screen is displayed briefly. It uses the colors and icons specified in the web app manifest.
-
-You will also notice that the URL bar and the rest of the browser UI are no longer shown if you have set the `display` property to `standalone` in the manifest.
-
-![PWA run from bookmark](./readme_assets/pwa-fullscreen.jpg)
-
-## Links
-
-[Comprendre les Promises en JavaScript / TypeScript](https://javascript.developpez.com/actu/146280/Comprendre-les-Promises-en-JavaScript-TypeScript-article-de-yahiko/)
-
-```
-
-```

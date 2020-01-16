@@ -1,9 +1,9 @@
 ---
-title: 5. Background sync and notifications
+title: 6. Background sync and notifications
 lang: en
 ---
 
-# Step 5 : Background sync and notifications
+# Step 6 : Background sync and notifications
 
 In this step, we will use the Service Worker and a new API, **Background Sync**, to update the list of attendees in the background and notify the user when there are new attendees.
 

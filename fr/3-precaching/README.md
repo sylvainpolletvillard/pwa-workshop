@@ -134,7 +134,7 @@ Les différents caches sont accessibles via la variable `caches` depuis le Servi
 
 Enfin, une autre méthode intéressante du cache est `match`: elle vérifie dans les tous les objets `Cache` gérés par le `CacheStorage` si une requête est identique à celle passée en paramètre. Si c'est le cas, elle retourne un promesse qui permet d'accéder à la réponse en cache.
 
-## Ajout des fichiers statiques dans le cache
+## Precaching des fichiers statiques critiques
 
 Nous allons mettre en cache les fichiers statiques essentiels de l'application, et ce le plus tôt possible. Le moment opportun pour cela est l'évènement `install` du Service Worker, car il n'est appelé qu'une fois lors de son installation. C'est ce qu'on appelle le _precaching_.
 
@@ -184,22 +184,79 @@ Nous voulons changer le comportement par défaut et retourner les versions préa
 4. Il ne reste plus qu'à retourner cette promesse de réponse à la requête en la passant en argument à `event.respondWith()`
 
 <Solution>
+
 ```js
-self.addEventListener('fetch', event => {
+self.addEventListener("fetch", event => {
   // Stratégie Cache-First
   event.respondWith(
-    caches.match(event.request) // On vérifie si la requête a déjà été mise en cache
-    .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
+    caches
+      .match(event.request) // On vérifie si la requête a déjà été mise en cache
+      .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
   );
 });
 ```
+
 </Solution>
 
 ## Test de fonctionnement offline
 
 Si tout a été fait correctement, vous devriez désormais pouvoir tester l'application en mode offline. Coupez votre serveur local et essayez de recharger l'application. La page en cache devrait alors s'afficher.
 
-## Mise à jour du cache statique
+## Mise en cache automatique
+
+En mode offline, certains fichiers statiques non indispensables ne peuvent plus être téléchargés et n'ont pas été mis en cache. C'est le cas du logo PWA dans la bannière par exemple. Faisons en sorte que ces fichiers soient automatiquement mis en cache, sans être préchargés à l'installation du Service Worker.
+
+1. Ajouter la fonction `cache` ci-dessous dans le code du Service Worker:
+
+```js
+function cache(request, response) {
+  if (response.type === "error" || response.type === "opaque") {
+    return Promise.resolve(); // do not put in cache network errors
+  }
+
+  return caches
+    .open(CACHE_NAME)
+    .then(cache => cache.put(request, response.clone()));
+}
+```
+
+::: warning Attention
+Une réponse ne peut être lue qu'une seule fois, elle doit donc être clonée avec la méthode `.clone()` avant de la stocker en cache.
+:::
+
+2. Dans le callback de l'événement `fetch`, ajouter une instruction `then` à la suite de la requête réseau, puis appelez la fonction `cache` déclarée précédemment avec la requête et sa réponse pour l'ajouter au cache.
+
+3. Ajouter une dernière instruction `then` à la suite pour vous assurer que la promesse retourne bien la réponse réseau comme valeur finale, comme le requiert la fonction `event.respondWith`.
+
+<Solution>
+
+```js
+self.addEventListener("fetch", event => {
+  // Stratégie Cache-First
+  event.respondWith(
+    caches
+      .match(event.request) // On vérifie si la requête a déjà été mise en cache
+      .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
+      .then(
+        response =>
+          cache(event.request, response) // on met à jour le cache
+            .then(() => response) // et on résout la promesse avec l'objet Response
+      )
+  );
+});
+```
+
+</Solution>
+
+Pour tester la mise en cache automatique, repassez en ligne et rechargez l'application pour mettre en cache le logo PWA. Vérifiez via les _DevTools_ qu'il a bien été ajoutée au cache, puis repassez en mode offline et essayez de le charger sans connexion Internet.
+
+::: tip
+
+Les fichiers provenant d'un domaine externe n'acceptant pas les requêtes CORS, comme les photos des participants qui viennent de Amazon et la police d'écriture qui vient de Google, ne peuvent pas être mises en cache comme les autres fichiers statiques. Vous devrez les héberger vous-même ou configurer CORS sur le domaine externe afin d'être autorisé à les mettre en cache.
+
+:::
+
+## Mises à jour du cache
 
 La mise en cache des fichiers statiques pose un problème; que se passe-t-il si j'ajoute, supprime, ou modifie ces fichiers sur le serveur ?
 
@@ -238,26 +295,3 @@ self.addEventListener("activate", event => {
 ```
 
 </Solution>
-
-## Installation de la PWA
-
-Selon le navigateur et l'OS, les conditions techniques requises pour pouvoir installer la PWA sur le système varient. Mais en principe, si vous avez un manifeste et un Service Worker actif gérant les requêtes entrantes avec `fetch`, alors vous pouvez actuellement installer cette PWA sur toutes les plates-formes supportées, et elles mettront à profit le manifeste et le Service Worker.
-
-La plate-forme ayant la meilleure intégration ce jour est **Android**. Si vous disposez d'un smartphone Android pouvant requêter votre serveur suite à un partage de connexion, essayez de charger l'application via Chrome for Android. Une fois la page web ouverte, le menu de Chrome devrait comporter l'option: **Add to home screen**
-
-![Add to home screen](../../3-precaching/readme_assets/pwa_install_menu.jpg)
-
-Poursuivre l'installation. Un nouveau raccourci devrait apparaitre dans l'écran d'accueil du smartphone. C'est le raccourci vers notre PWA !
-
-![PWA bookmark](../../3-precaching/readme_assets/pwa_install.jpg)
-![Splash-screen](../../3-precaching/readme_assets/splash-screen.jpg)
-
-Une fois la PWA installée, quand on clique sur le raccourci, un splash screen est affiché brièvement. Celui-ci reprend les couleurs et l'icône spécifiée dans le manifeste.
-
-Vous remarquerez que la barre d'adresse et le reste de l'interface du navigateur ne sont plus présentes, si vous avez configuré la propriété `display` en `standalone` dans le manifeste.
-
-![PWA run from bookmark](../../3-precaching/readme_assets/pwa-fullscreen.jpg)
-
-```
-
-```
