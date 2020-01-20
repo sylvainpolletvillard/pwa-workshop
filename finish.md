@@ -7,6 +7,11 @@ lang: en
 
 You now know the basics of a Progressive Web App, but you still have a lot to discover!
 
+## Quiz
+
+Want to test your knowledge about PWA ? A quiz is available here: [Quiz PWA](https://sylvainpolletvillard.github.io/quiz-static/?quiz=pwa)
+
+
 ## Additional exercises
 
 Here are some additional exercises that you can try to achieve from the knowledge gained in this workshop:
