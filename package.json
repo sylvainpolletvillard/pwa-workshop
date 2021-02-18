@@ -1,6 +1,6 @@
 {
 	"name": "pwa-workshop",
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"description": "Workshop d'introduction aux Progressive Web Applications",
 	"main": "index.js",
 	"scripts": {
@@ -20,6 +20,6 @@
 	"license": "MIT",
 	"devDependencies": {
 		"shelljs": "^0.8.4",
-		"vuepress": "^1.4.1"
+		"vuepress": "^1.8.1"
 	}
 }
