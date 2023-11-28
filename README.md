@@ -20,7 +20,7 @@ We will transform together a classic web application into a PWA. This will enabl
 - Basic knowledge of HTML, CSS and JavaScript. Understanding Promises and asynchronicity in JS can be a plus.
 - A computer with a **code editor** such as [Visual Studio Code](https://code.visualstudio.com/)
 - **Google Chrome** (_PWA are supported on most browsers but to facilitate the organization of the workshop, we will all use the same browser during development_)
-- A **local web server** (if you don't have any, try [npmjs.com/http-server](http://npmjs.com/http-server) with `cd app && http-server`)
+- A **local web server** with a SSL certificate (we recommend [Vite](http://npmjs.com/vite), a [Node.js](https://nodejs.org/) based server ; there is a pre-configured setup with automatically generated SSL certificate with [mkcert](https://mkcert.dev/))
 
 ## Preparation
 
@@ -33,41 +33,9 @@ We will transform together a classic web application into a PWA. This will enabl
 
 PWA require the use of HTTPS. This not a big matter for a deployed PWA because most web hosts provide HTTPS out of the box. However, it is not the case for local development. In fact, it requires manually generating and installing certificates to the certificate store. Fortunately, there is a cool CLI tool called [mkcert](https://mkcert.dev/) that simplifies these steps.
 
-Let's setup our local HTTPS server by following these steps:
+We propose for this workshop an automatically configured web server with [Vite](http://npmjs.com/vite) that uses [mkcert](https://mkcert.dev/) to generate a local SSL certificate. If you want to use it, you will need to have [Node.js](https://nodejs.org/) installed on your computer. After that, run the server with: `cd app && npm i && npm run dev`. On first run, it will ask you to install the certificate in your certificate store. Accept it and you are good to go.
 
-- Install [mkcert](https://github.com/FiloSottile/mkcert#installation) as indicated in its GitHub page
-- Run `mkcert -install` to install a local CA (Certification authority)
-
-```console
-Created a new local CA at "/Users/****/Library/Application Support/mkcert" 💥
-The local CA is now installed in the system trust store! ⚡️
-The local CA is now installed in the Firefox trust store (requires browser restart)! 🦊
-```
-
-- cd to the website root
-- Run this command that generated certificated for our server: `mkcert localhost 127.0.0.1 ::1`
-
-```console
-Using the local CA at "/Users/****yassinebenabbas****/Library/Application Support/mkcert" ✨
-
-Created a new certificate valid for the following names 📜
- - "localhost"
- - "127.0.0.1"
- - "::1"
-
-The certificate is at "./localhost+2.pem" and the key at "./localhost+2-key.pem" ✅
-```
-
-- We will get two pem files. These will be used by our SSL enabled dev server.
-
-![certs](./assets/certs.png)
-
-- Install npm package `http-server` if not done already with : `npm i -g http-server`
-- Run the server in SSL mode: `http-server -S -o -C "localhost+2.pem" -K "localhost+2-key.pem"`
-
-![certs](./assets/certok.png)
-
-In this part, we saw how to install a Service Worker, and how to manage two Service Worker lifecycle events: **install** and **activate**. Now, let's see how to do something useful with this Service Worker.
+Of course, you can use any other web server that supports HTTPS. In this case, you will need to generate a certificate with [mkcert](https://mkcert.dev/) and configure your server to use it.
 
 ## Steps of the workshop
 

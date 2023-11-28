@@ -20,7 +20,7 @@ Nous allons ensemble transformer une application web classique en une PWA. Cela 
 - Connaître les bases du HTML, CSS et JavaScript.
 - Un poste de travail muni d'un **éditeur de code** tel que [Visual Studio Code](https://code.visualstudio.com/)
 - **Google Chrome** (_les PWA sont supportées par la plupart des navigateurs mais pour faciliter l'organisation, nous utiliserons tous le même navigateur pendant le développement_)
-- Un **serveur web local** supportant HTTPS (si vous n'en avez pas, essayez [npmjs.com/http-server](http://npmjs.com/http-server) et la commande `cd app && http-server`
+- Un **serveur web local** supportant HTTPS (nous recommandons [Vite](http://npmjs.com/vite), un serveur basé sur [Node.js](https://nodejs.org/) ; une préconfiguration vous est fournie avec le projet, qui génère automatiquement un certificat SSL au démarrage avec [mkcert](https://mkcert.dev/))
 
 ## Préparation
 
@@ -31,49 +31,11 @@ Nous allons ensemble transformer une application web classique en une PWA. Cela 
 
 ## Développement local avec SSL
 
-Les PWA nécessitent l'utilisation de HTTPS. Ce n’est pas problématique pour une PWA déployée car la plupart des hébergeurs supportent nativement HTTPS. Cependant, ce n'est pas aussi simple pour le développement local.
-En effet, il faut pour cela générer et installer manuellement des certificats dans le magasin de certificats.
-Heureusement, il existe un outil CLI intéressant appelé [mkcert](https://mkcert.dev/) qui simplifie ces étapes.
+Les PWA nécessitent l’utilisation de HTTPS. Ce n'est pas un gros problème pour une PWA déployée, car la plupart des hébergeurs Web fournissent HTTPS dès le départ. Ce n’est cependant pas le cas pour le développement local. En fait, cela nécessite de générer et d’installer manuellement des certificats dans le magasin de certificats de votre système. Heureusement, il existe un outil CLI appelé [mkcert](https://mkcert.dev/) qui simplifie ces étapes.
 
-Configurons notre serveur HTTPS local en procédant comme suit:
+Nous proposons pour ce workshop un serveur web configuré automatiquement avec [Vite](http://npmjs.com/vite) qui utilise [mkcert](https://mkcert.dev/) pour générer un certificat SSL local. Si vous souhaitez l'utiliser, vous devrez avoir [Node.js](https://nodejs.org/) installé sur votre ordinateur. Après cela, lancez le serveur avec : `cd app && npm i && npm run dev`. Lors de la première exécution, il vous demandera d'installer le certificat dans votre magasin de certificats. Acceptez-le et vous êtes prêt à démarrer.
 
-- Installer [mkcert](https://github.com/FiloSottile/mkcert#installation) en suivant les instruction indiquées dans le GitHub
-- Lancer `mkcert -install` Pour installer une CA (Autorité de certification)
-
-```console
-Created a new local CA at "/Users/****/Library/Application Support/mkcert" 💥
-The local CA is now installed in the system trust store! ⚡️
-The local CA is now installed in the Firefox trust store (requires browser restart)! 🦊
-```
-
-- cd jusqu'à la racine du site
-- Lancer cette commande qui génère les certificats pour notre serveur de dev: `mkcert localhost 127.0.0.1 ::1`
-
-```console
-Using the local CA at "/Users/****yassinebenabbas****/Library/Application Support/mkcert" ✨
-
-Created a new certificate valid for the following names 📜
- - "localhost"
- - "127.0.0.1"
- - "::1"
-
-The certificate is at "./localhost+2.pem" and the key at "./localhost+2-key.pem" ✅
-```
-
-- Nous aurons deux fichiers PEM. Ceux-ci seront utilisés par notre serveur de développement compatible SSL.
-
-![certs](../assets/certs.png)
-
-- Installer le package `http-server` si ce n'est pas déjà fait avec la commande: `npm i -g http-server`
-- Lancer le serveur en mode SSL: `http-server -S -o -C "localhost+2.pem" -K "localhost+2-key.pem"`
-
-Et voilà, on est bien en HTTPs en local. C'est le top !
-
-![certs](../assets/certok.png)
-
-Dans cette partie, nous avons vu comment installer un Service Worker.
-On a également géré deux évènements du cycle de vie du Service Worker: **install** et **activate**. Nous allons maintenant voir comment faire quelque-chose d'utile avec ce Service Worker.
-
+Bien entendu, vous pouvez utiliser n’importe quel autre serveur Web prenant en charge HTTPS. Dans ce cas, vous devrez générer un certificat avec [mkcert](https://mkcert.dev/) et configurer votre serveur pour l'utiliser.
 ## Etapes du workshop
 
 1. Ajout d'un manifeste d'application web

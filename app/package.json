@@ -1,0 +1,14 @@
+{
+  "name": "pwa-workshop",
+  "description": "Workshop d'introduction aux Progressive Web Applications",
+  "main": "index.html",
+  "devDependencies": {
+    "vite": "^5.0.3",
+    "vite-plugin-mkcert": "^1.17.1"
+  },
+  "scripts":{
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  }
+}
