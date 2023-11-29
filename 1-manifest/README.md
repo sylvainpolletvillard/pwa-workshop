@@ -60,7 +60,7 @@ To save time, you can find example icons with the required dimensions in the `ap
 
 The manifest can then be saved in a text file called `manifest.json` in the app root folder.
 
-<Solution>
+<Solution />
 ```json
 {
   "name": "Progressive Web Apps Workshop",
@@ -85,7 +85,6 @@ The manifest can then be saved in a text file called `manifest.json` in the app 
   ]
 }
 ```
-</Solution>
 
 ## Adding the manifest in the application
 

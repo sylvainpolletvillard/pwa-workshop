@@ -19,7 +19,8 @@
 	"homepage": "https://github.com/sylvainpolletvillard/pwa-workshop#readme",
 	"license": "MIT",
 	"devDependencies": {
-		"shelljs": "^0.8.4",
-		"vuepress": "^1.8.1"
+		"@vuepress/plugin-register-components": "^2.0.0-rc.0",
+		"shelljs": "^0.8.5",
+		"vuepress": "^2.0.0-rc.0"
 	}
 }
