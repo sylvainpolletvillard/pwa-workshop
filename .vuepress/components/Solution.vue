@@ -1,5 +1,9 @@
 <template>
-  <details @toggle="toggle" :class="{ visible: isVisible, hidden: !isVisible }">
+  <details
+    @toggle="toggle"
+    class="solution"
+    :class="{ visible: isVisible, hidden: !isVisible }"
+  >
     <summary>{{ isVisible ? labelVisible : labelHidden }}</summary>
     <slot></slot>
   </details>

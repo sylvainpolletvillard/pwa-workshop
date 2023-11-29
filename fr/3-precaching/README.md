@@ -29,8 +29,8 @@ Voici un exemple plus concret d’une `Promise` qui génère un nombre aléatoir
 
 ```javascript
 function generateRandomNumber() {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
       const nb = Math.floor(Math.random() * 10); // random number between 0 and 10
       if (nb % 2 == 0) {
         resolve(nb);
@@ -51,11 +51,11 @@ L'exemple suivant montre comment gérer la promesse renvoyée par la fonction `g
 ```javascript
 const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
 promise
-  .then(function(number) {
+  .then(function (number) {
     // this function is called when the promise succeds
     console.log(number);
   })
-  .catch(function(error) {
+  .catch(function (error) {
     // this function is called when the promise fails
     console.error(error);
   });
@@ -71,9 +71,7 @@ function handleSuccess(number) {
 function handleFailure(message) {
   console.error(message);
 }
-generateRandomNumber()
-  .then(handleSuccess)
-  .catch(handleFailure);
+generateRandomNumber().then(handleSuccess).catch(handleFailure);
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
@@ -143,21 +141,19 @@ Nous allons mettre en cache les fichiers statiques essentiels de l'application, 
 3. Une fois le cache ouvert, ajoutez au cache avec [`cache.addAll(['url1','url2',...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll) les URL vers les fichiers statiques essentiels de notre application: la page HTML racine, le fichier `styles.css` et le fichier `scripts.js`.
 4. Afin que le Service Worker s'active une fois le precaching terminé, passez la `Promise` retournée par `cache.addAll` en argument à [`event.waitUntil()`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil), `event` étant l'évènement d'installation.
 
-<Solution>
+<Solution />
 
 ```js
 const CACHE_NAME = "V1";
 const STATIC_CACHE_URLS = ["/", "styles.css", "scripts.js"];
 
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   console.log("Service Worker installing.");
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_CACHE_URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_CACHE_URLS))
   );
 });
 ```
-
-</Solution>
 
 Rechargez la page et le Service Worker, en vérifiant bien que la nouvelle version du Service Worker remplace l'ancienne comme vu à l'étape 2. On peut alors vérifier que les fichiers sont ajoutés dans le cache en consultant l'écran _Cache Storage_ de l'onglet _Application_ des Developer Tools.
 
@@ -168,7 +164,7 @@ Rechargez la page et le Service Worker, en vérifiant bien que la nouvelle versi
 Maintenant que les fichiers sont en cache, il nous reste à indiquer d'utiliser leur version en cache lorsque le navigateur les demande. Pour ce faire, nous allons passer par l'évènement `fetch`. Ce dernier intercepte tous les appels émis par les clients ayant installé le Service Worker. On peut alors retourner une réponse personnalisée avec `event.respondWith`, où `event` est le [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent). La fonction [`event.respondWith`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith) prend comme unique argument une promesse qui devra être résolue avec la réponse à retourner.
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   console.log(`Request of ${event.request.url}`);
 
   // comportement par défaut: requête le réseau
@@ -183,20 +179,18 @@ Nous voulons changer le comportement par défaut et retourner les versions préa
 3. Si aucune entrée dans le cache n'est trouvée, la promesse est résolue avec la valeur `undefined`. Dans ce cas, il faut requêter le réseau et retourner `fetch(event.request)` à la place.
 4. Il ne reste plus qu'à retourner cette promesse de réponse à la requête en la passant en argument à `event.respondWith()`
 
-<Solution>
+<Solution />
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   // Stratégie Cache-First
   event.respondWith(
     caches
       .match(event.request) // On vérifie si la requête a déjà été mise en cache
-      .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
+      .then((cached) => cached || fetch(event.request)) // sinon on requête le réseau
   );
 });
 ```
-
-</Solution>
 
 ## Test de fonctionnement offline
 
@@ -216,7 +210,7 @@ function cache(request, response) {
 
   return caches
     .open(CACHE_NAME)
-    .then(cache => cache.put(request, response.clone()));
+    .then((cache) => cache.put(request, response.clone()));
 }
 ```
 
@@ -228,25 +222,23 @@ Une réponse ne peut être lue qu'une seule fois, elle doit donc être clonée a
 
 3. Ajouter une dernière instruction `then` à la suite pour vous assurer que la promesse retourne bien la réponse réseau comme valeur finale, comme le requiert la fonction `event.respondWith`.
 
-<Solution>
+<Solution />
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   // Stratégie Cache-First
   event.respondWith(
     caches
       .match(event.request) // On vérifie si la requête a déjà été mise en cache
-      .then(cached => cached || fetch(event.request)) // sinon on requête le réseau
+      .then((cached) => cached || fetch(event.request)) // sinon on requête le réseau
       .then(
-        response =>
+        (response) =>
           cache(event.request, response) // on met à jour le cache
             .then(() => response) // et on résout la promesse avec l'objet Response
       )
   );
 });
 ```
-
-</Solution>
 
 Pour tester la mise en cache automatique, repassez en ligne et rechargez l'application pour mettre en cache le logo PWA. Vérifiez via les _DevTools_ qu'il a bien été ajoutée au cache, puis repassez en mode offline et essayez de le charger sans connexion Internet.
 
@@ -271,20 +263,20 @@ Pour gérer ce problème, une solution est de passer par un nouveau cache avec u
 3. Passez la `Promise` retournée par `caches.delete` dans `event.waitUntil` afin d'attendre la suppression du cache avant la fin de l'étape d'activation
 4. _(facultatif)_ - Améliorez votre code de nettoyage des anciens caches en supprimant tous les caches qui ne font pas partie de votre liste de caches connus et utilisés. Vous pouvez parcourir tous les caches existants avec la méthode `caches.keys()`
 
-<Solution>
+<Solution />
 
 ```js
 const CACHE_NAME = "V2";
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   // delete any unexpected caches
   event.waitUntil(
     caches
       .keys()
-      .then(keys => keys.filter(key => key !== CACHE_NAME))
-      .then(keys =>
+      .then((keys) => keys.filter((key) => key !== CACHE_NAME))
+      .then((keys) =>
         Promise.all(
-          keys.map(key => {
+          keys.map((key) => {
             console.log(`Deleting cache ${key}`);
             return caches.delete(key);
           })
@@ -293,5 +285,3 @@ self.addEventListener("activate", event => {
   );
 });
 ```
-
-</Solution>

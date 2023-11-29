@@ -29,8 +29,8 @@ Here is a more concrete example of a promise that generates a random number afte
 
 ```javascript
 function generateRandomNumber() {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
       const nb = Math.floor(Math.random() * 10); // random number between 0 and 10
       if (nb % 2 == 0) {
         resolve(nb);
@@ -51,11 +51,11 @@ The following example illustrates how to handle the promise returned by the `gen
 ```javascript
 const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
 promise
-  .then(function(number) {
+  .then(function (number) {
     // this function is called when the promise succeds
     console.log(number);
   })
-  .catch(function(error) {
+  .catch(function (error) {
     // this function is called when the promise fails
     console.error(error);
   });
@@ -71,9 +71,7 @@ function handleSuccess(number) {
 function handleFailure(message) {
   console.error(message);
 }
-generateRandomNumber()
-  .then(handleSuccess)
-  .catch(handleFailure);
+generateRandomNumber().then(handleSuccess).catch(handleFailure);
 console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
@@ -140,21 +138,19 @@ We will cache the essential static files of the application as soon as possible.
 3. Once the cache is open, add to the cache with [`cache.addAll(['url1', 'url2', ...])`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll). the URLs to the essential static files of our application: the root HTML page, the `styles.css` file and the`scripts.js` file.
 4. In order for the Service Worker to activate after precaching is complete, pass the `Promise` returned by `cache.addAll` as an argument to [`event.waitUntil ()`](https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil), `event` being the installation event.
 
-<Solution>
+<Solution />
 
 ```js
 const CACHE_NAME = "V1";
 const STATIC_CACHE_URLS = ["/", "styles.css", "scripts.js"];
 
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   console.log("Service Worker installing.");
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_CACHE_URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_CACHE_URLS))
   );
 });
 ```
-
-</Solution>
 
 Reload the page and the Service Worker, making sure that the new version of the Service Worker replaces the old one as seen in step 2. We can then check that the files are added to the cache by looking at the _Cache Storage section_ in the _Application_ tab of Chrome Developer Tools.
 
@@ -165,7 +161,7 @@ Reload the page and the Service Worker, making sure that the new version of the 
 Now that the files are cached, we have to indicate to use their cached version when the browser requests them. To do this, we will use the `fetch` event. The latter intercepts all requests made by clients who have installed the Service Worker. You can then return a custom response with `event.respondWith`, where `event` is the [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent). The [`event.respondWith`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith) function takes as a single argument a Promise that must be resolved with the response to return.
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   console.log(`Request of ${event.request.url}`);
 
   // default behaviour: request the network
@@ -180,20 +176,18 @@ We want to change the default behavior and return previously cached versions if 
 3. If no cache entry is found, the Promise is resolved with the value `undefined`. In this case, you need to request the network and return `fetch(event.request)` instead.
 4. Finally, return this Promise of Response to the client request by passing it as argument to `event.respondWith()`
 
-<Solution>
+<Solution/>
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   // Cache-First Strategy
   event.respondWith(
     caches
       .match(event.request) // check if the request has already been cached
-      .then(cached => cached || fetch(event.request)) // otherwise request network
+      .then((cached) => cached || fetch(event.request)) // otherwise request network
   );
 });
 ```
-
-</Solution>
 
 ## Testing offline
 
@@ -213,7 +207,7 @@ function cache(request, response) {
 
   return caches
     .open(CACHE_NAME)
-    .then(cache => cache.put(request, response.clone()));
+    .then((cache) => cache.put(request, response.clone()));
 }
 ```
 
@@ -225,25 +219,23 @@ An answer can only be read once, so it must be cloned with the `.clone()` method
 
 3. Add one last `then` instruction to make sure the promise resolves with the network response as final value, as required by the `event.respondWith` function.
 
-<Solution>
+<Solution/>
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   // Cache-First Strategy
   event.respondWith(
     caches
       .match(event.request) // check if the request has already been cached
-      .then(cached => cached || fetch(event.request)) // otherwise request network
+      .then((cached) => cached || fetch(event.request)) // otherwise request network
       .then(
-        response =>
+        (response) =>
           cache(event.request, response) // put response in cache
             .then(() => response) // resolve promise with the network response
       )
   );
 });
 ```
-
-</Solution>
 
 To test automatic cache, go back online and reload the app to put in cache the PWA logo. Check with the _DevTools_ that it is correctly added to the cache, then go back offline and try to load this logo without any Internet connection.
 
@@ -266,20 +258,20 @@ To handle this problem, one solution is to use a new cache with another name. Th
 3. Pass the `Promise` returned by`caches.delete` in `event.waitUntil` in order to wait for the cache to be removed before the end of the activation step
 4. _(optional)_ - Improve your cache cleanup code by removing all caches that are not in your whitelist of used caches. You can browse all existing caches with the `caches.keys()` method
 
-<Solution>
+<Solution/>
 
 ```js
 const CACHE_NAME = "V2";
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   // delete any unexpected caches
   event.waitUntil(
     caches
       .keys()
-      .then(keys => keys.filter(key => key !== CACHE_NAME))
-      .then(keys =>
+      .then((keys) => keys.filter((key) => key !== CACHE_NAME))
+      .then((keys) =>
         Promise.all(
-          keys.map(key => {
+          keys.map((key) => {
             console.log(`Deleting cache ${key}`);
             return caches.delete(key);
           })
@@ -288,7 +280,5 @@ self.addEventListener("activate", event => {
   );
 });
 ```
-
-</Solution>
 
 ![Flowsheet](./readme_assets/schema.png)

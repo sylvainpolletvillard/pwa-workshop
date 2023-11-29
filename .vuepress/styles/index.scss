@@ -1,0 +1,8 @@
+details.solution.hidden + * {
+    display: none;
+}
+
+details.solution.visible + div {
+    display: block;
+    box-shadow: 0 0 0 1em #ccffcc;
+}

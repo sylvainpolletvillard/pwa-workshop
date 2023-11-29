@@ -57,7 +57,7 @@ Pour vous faire gagner du temps, des icônes au format demandé sont déjà disp
 
 On peut ensuite enregistrer le manifeste dans un fichier texte appelé `manifest.webmanifest` (ou `manifest.json`) à la racine du site.
 
-<Solution>
+<Solution />
 ```json
 {
   "name": "Progressive Web Apps Workshop",
@@ -82,7 +82,6 @@ On peut ensuite enregistrer le manifeste dans un fichier texte appelé `manifest
   ]
 }
 ```
-</Solution>
 
 Si vous souhaitez générer le manifeste d'une site déjà déployé, vous pouvez utiliser [pwabuilder](https://www.pwabuilder.com/) en lui fournissant l'URL de vote site.
 

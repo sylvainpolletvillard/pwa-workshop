@@ -38,7 +38,7 @@ Nous allons pour notre application implémenter cette stratégie de _Cache, Upda
 Repartons du code du Service Worker, dans le callback d'événement `fetch`. Nous allons distinguer les requêtes vers notre API des requêtes statiques, afin d'appliquer une stratégie différente pour les données:
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   if (event.request.url.includes("/api/")) {
     // réponse aux requêtes API, stratégie Cache Update Refresh
   } else {
@@ -53,7 +53,7 @@ Toutes nos requêtes vers l'API passent par le même endpoint contenant `/api/` 
 
 La première étape est de répondre immédiatement avec la réponse en cache si elle existe. Vous pouvez pour cela réutiliser la fonction `caches.match` vu à l'étape 3 pour la réponse aux requêtes de ressources statiques.
 
-<Solution>
+<Solution />
 ```js
 if (event.request.url.includes("/api/")) {
     // réponse aux requêtes API, stratégie Cache Update Refresh
@@ -61,7 +61,6 @@ if (event.request.url.includes("/api/")) {
     //TODO: update et refresh
 }
 ```
-</Solution>
 
 ### 2. Update
 
@@ -70,7 +69,7 @@ En parallèle, la requête au réseau doit également être faite avec la métho
 ```js
 function update(request) {
   return fetch(request.url).then(
-    response =>
+    (response) =>
       cache(request, response) // on peut mettre en cache la réponse
         .then(() => response) // résout la promesse avec l'objet Response
   );
@@ -79,7 +78,7 @@ function update(request) {
 
 Ensuite, appelez cette fonction `update` dans le callback de `fetch` en parallèle de la réponse avec la version en cache. Vous pouvez tout à fait continuer à utiliser l'objet `event` dans la suite du code même après un premier `event.respondWith`. Cependant, vous devrez alors utiliser la méthode `event.waitUntil()` pour étendre la durée de vie de l'événement et indiquer au navigateur que d'autres tâches doivent être effectuées au delà de la réponse initiale.
 
-<Solution>
+<Solution />
 
 ```js
 if (event.request.url.includes("/api/")) {
@@ -88,8 +87,6 @@ if (event.request.url.includes("/api/")) {
   event.waitUntil(update(event.request)); //TODO: refresh
 }
 ```
-
-</Solution>
 
 ### 3. Refresh
 
@@ -103,14 +100,14 @@ Déclarez la fonction `refresh` ci-dessous dans le code du Service Worker.
 function refresh(response) {
   return response
     .json() // lit et parse la réponse JSON
-    .then(jsonResponse => {
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
+    .then((jsonResponse) => {
+      self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
           // signaler et envoyer au client les nouvelles données
           client.postMessage(
             JSON.stringify({
               type: response.url,
-              data: jsonResponse.data
+              data: jsonResponse.data,
             })
           );
         });
@@ -122,7 +119,7 @@ function refresh(response) {
 
 Il ne reste plus qu'à assembler les 3 blocs `cache`, `update` et `refresh` pour établir la stratégie: la réponse du cache avec un `event.respondWith`, puis en parallèle l'update suivi du refresh dans un `event.waitUntil`. La fonction `update` retourne une `Promise` résolue avec la réponse réseau, vous pouvez donc la chaîner avec `.then()` pour exécuter une autre fonction à la suite d'une réponse réseau.
 
-<Solution>
+<Solution />
 
 ```js
 if (event.request.url.includes("/api/")) {
@@ -132,14 +129,12 @@ if (event.request.url.includes("/api/")) {
 }
 ```
 
-</Solution>
-
 ## Rafraîchissement côté applicatif
 
 Le client peut écouter les messages émis par le Service Worker via le callback `navigator.serviceWorker.onmessage`. Vous pouvez ensuite désérialiser le message avec `JSON.parse(event.data)`. Dans `scripts.js`, une fois le Service Worker enregistré, déclarez le callback suivant:
 
 ```js
-navigator.serviceWorker.onmessage = event => {
+navigator.serviceWorker.onmessage = (event) => {
   const message = JSON.parse(event.data);
   //TODO: détecter le type de message et actualiser l'affichage
 };
@@ -147,7 +142,7 @@ navigator.serviceWorker.onmessage = event => {
 
 La fonction `renderAttendees` permet d'actualiser la liste des participants. L'affichage sera donc mis à jour quand le Service Worker enverra le message avec les nouvelles données. Complétez le code ci-dessus en vérifiant si le message correspond à une mise à jour des participants, puis rappelez la fonction `renderAttendees` avec les données reçues dans le message.
 
-<Solution>
+<Solution />
 ```js
 navigator.serviceWorker.onmessage = event => {
 	const message = JSON.parse(event.data);
@@ -157,7 +152,6 @@ navigator.serviceWorker.onmessage = event => {
 	}
 }
 ```
-</Solution>
 
 ## Test de bon fonctionnement
 
