@@ -9,7 +9,11 @@ next: ./1-manifest/
 
 ![Logo](./logo-192.png)
 
-<SuggestLocale></SuggestLocale>
+<div class="tip custom-block">
+    <p>
+      <a href="/fr/">Vous préférez peut-être lire ce guide en français ?</a>
+    </p>
+</div>
 
 You may have heard about Progressive Web Apps (PWA) in the latest web trends. What is it all about and how do they improve classic web applications ? This workshop will let you understand PWA better with a bit of practice 💪.
 

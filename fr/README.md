@@ -9,7 +9,11 @@ next: ./1-manifest/
 
 ![Logo](../logo-192.png)
 
-<SuggestLocale></SuggestLocale>
+<div class="tip custom-block">
+    <p>
+      <a href="/">You might prefer to read this guide in english ?</a>
+    </p>
+</div>
 
 Le terme Progressive Web App (PWA) n'a sans doute pas échappé à toute personne qui suit l'actualité web. À quoi correspond ce terme et qu'apporte t-il à une application web ? Ce workshop vous permettra de mieux comprendre les PWA avec un peu de pratique 💪.
 
@@ -36,6 +40,7 @@ Les PWA nécessitent l’utilisation de HTTPS. Ce n'est pas un gros problème po
 Nous proposons pour ce workshop un serveur web configuré automatiquement avec [Vite](http://npmjs.com/vite) qui utilise [mkcert](https://mkcert.dev/) pour générer un certificat SSL local. Si vous souhaitez l'utiliser, vous devrez avoir [Node.js](https://nodejs.org/) installé sur votre ordinateur. Après cela, lancez le serveur avec : `cd app && npm i && npm run dev`. Lors de la première exécution, il vous demandera d'installer le certificat dans votre magasin de certificats. Acceptez-le et vous êtes prêt à démarrer.
 
 Bien entendu, vous pouvez utiliser n’importe quel autre serveur Web prenant en charge HTTPS. Dans ce cas, vous devrez générer un certificat avec [mkcert](https://mkcert.dev/) et configurer votre serveur pour l'utiliser.
+
 ## Etapes du workshop
 
 1. Ajout d'un manifeste d'application web
