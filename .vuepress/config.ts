@@ -1,4 +1,6 @@
-module.exports = {
+import { defaultTheme } from "vuepress";
+
+export default {
   base: "/",
   port: "7999",
   serviceWorker: true,
@@ -51,13 +53,13 @@ module.exports = {
       description: "Introduction aux Progressive Web Applications",
     },
   },
-  themeConfig: {
+  theme: defaultTheme({
     locales: {
       "/": {
         // text for the language dropdown
-        selectText: "Language",
+        selectLanguageText: "Language",
         // label for this locale in the language dropdown
-        label: "English",
+        selectLanguageName: "English",
         // text for the edit-on-github link
         editLinkText: "Edit this page on GitHub",
         sidebar: [
@@ -72,8 +74,8 @@ module.exports = {
         ],
       },
       "/fr/": {
-        selectText: "Langue",
-        label: "Français",
+        selectLanguageText: "Langue",
+        selectLanguageName: "Français",
         editLinkText: "Editer sur GitHub",
         sidebar: [
           "/fr/",
@@ -97,5 +99,5 @@ module.exports = {
         link: "https://github.com/sylvainpolletvillard/pwa-workshop",
       },
     ],
-  },
+  }),
 };
