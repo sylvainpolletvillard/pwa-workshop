@@ -9,89 +9,41 @@ On a vu dans l'étape précédent deux méthodes du cycle de vie d'un Service Wo
 
 ## Préambule: Utilisation des promesses et async / wait
 
-Les API de Service Worker reposent largement sur des promesses. Jetons un coup d'œil sur leur fonctionnement.
+Les API de Service Worker utilisent majoritairement une fonctionnalité de JavaScript appelée les promesses (`Promise`). Jetons un coup d'œil sur leur fonctionnement.
 
 ::: tip
-Vous pouvez essayer le code de cette section en utilisant node ou un éditeur en ligne tel que [https://repl.it](https://repl.it/languages/nodejs)
+Vous pouvez essayer le code de cette section en utilisant la console JavaScript de votre navigateur  ou un éditeur en ligne tel que [https://repl.it](https://repl.it/languages/nodejs)
 :::
 
-Les promesses sont une interface standardisée permettant de mieux gérer un enchaînement de fonctions asynchrones. Elles améliorent la lisibilité du code et sont plus pratiques à manipuler par le développeur que des fonctions de retour (_callbacks_) passées en argument par exemple. La norme ES2015 de JavaScript permet de créer des promesses à l'aide de ce constructeur:
+Les promesses sont une interface standardisée permettant de gérer plus facilement les appels en série de fonctions asynchrones. Elles améliorent la lisibilité du code et sont plus pratiques à manipuler par le développeur que des fonctions de retour (_callbacks_) passées en argument par exemple. Elles sont disponibles nativement depuis ES2015. Une promesse est un objet qui représente la promesse d'un résultat d'une opération asynchrone. Une promesse peut être dans l'un des trois états suivants:
+- **pending**: l'opération asynchrone est en cours d'exécution
+- **fulfilled**: l'opération asynchrone a réussi
+- **rejected**: l'opération asynchrone a échoué
+
+Une fois que nous avons un objet `Promise`, son code associé a déjà commencé à s'exécuter de manière asynchrone. Nous pouvons utiliser les fonctions `then()` et `reject()` pour déclarer une fonction à exécuter lorsque la promesse réussit ou échoue. La plupart des API des Service Workers fournissent des fonctions asynchrones qui retournent une promesse. Par exemple, la fonction `fetch ()` est utilisée pour faire une requête réseau et retourne une promesse qui se résout avec un objet `Response` lorsque la requête a réussie, ou est rejetée avec une erreur lorsque la requête a échoué pour une quelconque raison :
 
 ```javascript
-const promise = new Promise((resolve, reject) => {
-  // async function execution
-  // resolve is called on success
-  // reject is called on failure
-});
-```
-
-Voici un exemple plus concret d’une `Promise` qui génère un nombre aléatoire après un délai de 1 seconde. Il réussit lorsque le nombre généré est pair et échoue lorsque le nombre généré est impair.
-
-```javascript
-function generateRandomNumber() {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      const nb = Math.floor(Math.random() * 10); // random number between 0 and 10
-      if (nb % 2 == 0) {
-        resolve(nb);
-      } else {
-        reject({ message: "odd number", number: nb });
-      }
-    }, 1000);
-  });
-}
-```
-
-Toutefois, nous n'utiliserons pas ce constructeur `Promise` car la plupart des API liées au Service Worker sont des fonctions qui renvoient déjà une `Promise`.
-
-Une fois que nous avons un objet de type `Promise`, le code associé commence à s'exécuter de manière asynchrone. Nous pouvons utiliser par la suite les fonctions `then()` et `catch()` pour exécuter une fonction lorsque la `Promise` réussit (elle a appelé `resolve`) ou échoue (elle a appelé `reject`).
-
-L'exemple suivant montre comment gérer la promesse renvoyée par la fonction `generateRandomNumber ()`. [Exécuter en ligne](https://repl.it/@yostane/promise01)
-
-```javascript
-const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
+const promise = fetch("http://server.api/user/yassine")
 promise
-  .then(function(number) {
-    // this function is called when the promise succeds
-    console.log(number);
+  .then(function(userData) {
+    // this function is called when the request is successful
+    console.log(userData);
   })
   .catch(function(error) {
-    // this function is called when the promise fails
+    // this function is called when the request failed for any reason
     console.error(error);
   });
-console.log("Promise example"); // this message is shows first because the promise is async
+console.log("Promise example"); // this log is shown before the other two because the promise is asynchronous
 ```
 
-Nous pouvons rendre le code un peu plus lisible en passant des fonctions à `then` et `catch` au lieu de définir des fonctions anonymes. [Exécuter en ligne](https://repl.it/@yostane/promise02)
+L'intérêt principal des promesses est qu'elles peuvent être facilement chaînées. Dans un callback passe à `then()`, vous pouvez retourner une autre promesse afin de chaîner plusieurs opérations asynchrones:
 
 ```javascript
-function handleSuccess(number) {
-  console.log(number);
-}
-function handleFailure(message) {
-  console.error(message);
-}
-generateRandomNumber()
-  .then(handleSuccess)
-  .catch(handleFailure);
-console.log("Promise example"); // this message is shows first because the promise is async
-```
-
-L'intérêt principal des promesses est qu'elles peuvent être facilement chaînées. L'exemple suivant génère un nouveau nombre aléatoire de manière asynchrone seulement si la première `Promise` réussit. [Exécuter en ligne](https://repl.it/@yostane/promise03)
-
-```javascript
-function handleSuccess(number) {
-  console.log(number);
-}
-function handleFailure(message) {
-  console.error(message);
-}
-generateRandomNumber()
-  .then(handleSuccess)
-  .then(generateRandomNumber)
-  .then(handleSuccess) // chain a second promise and handle is result
-  .catch(handleFailure); // if any of the previous calls fails, catch is called
-console.log("Promise example"); // this message is shows first because the promise is async
+initDatabase()
+.then(fetchAllUsers)
+.then(users => fetchUser(users[0].id))
+.then(user => console.log(user))
+.catch(handleFailure); // if any of the previous calls fails, catch is called
 ```
 
 Depuis la spécification ES2018, il existe un nouvel opérateur permettant de gérer les promesses dans un style plus _synchrone_.
@@ -99,22 +51,20 @@ Au lieu d'enchainer les appels de `then`, on peut mettre en pause l'exécution d
 
 Ceci est appelé _une attente du résultat_ ou **await** et se fait en utilisant les mots-clés `async / await`. Avec cette méthode, la méthode `catch` est remplacée par un bloc `try / catch`, tout comme on gère habituellement les exceptions synchrones.
 
-L'extrait de code suivant transforme le dernier exemple en utilisant `async / wait`. [Exécuter en ligne](https://repl.it/@yostane/promise04)
+L'extrait de code suivant transforme le dernier exemple en utilisant `async / wait`:
 
 ```javascript
-// If we want to use await, we must be place the code in async function
-// More reading https://github.com/tc39/proposal-top-level-await, https://gist.github.com/Rich-Harris/0b6f317657f5167663b493c722647221
+// Pour pouvoir utiliser await, il faut que la fonction soit déclarée avec le mot-clé async
 async function mainAsync() {
   try {
-    // create the promise asynchronously without blocking the thread
-    // and wait for its result (the parameter passed to resolve)
-    const nb1 = await generateRandomNumberAsync();
-    console.log(nb1); // nb1 is not the promise but rather its result in case of success
-    const nb2 = await generateRandomNumberAsync();
-    console.log(nb2);
+    // attend le résultat de la promesse sans bloquer le thread
+    await initDatabase()
+    const users = await fetchAllUsers()
+    const user = await fetchUser(users[0].id)
+    console.log(user)
   } catch (error) {
-    // this catch block is executed if any promise above fails
-    console.error(error); // the error variable is the value passed to reject
+    // ce bloc catch est exécuté si l'une des promesses ci-dessus échoue
+    console.error(error);
   }
 }
 mainAsync(); // call the function that runs async code
@@ -122,7 +72,6 @@ console.log("Promise example with async / await");
 ```
 
 Ceci conclut cet aperçu sur les promesses et async/wait.
-Avec cette connaissance acquise, nous pouvons utiliser les API de mise en cache du service worker plus sereinement.
 
 _Voici en bonus quelques exercices supplémentaires: [série 1](https://github.com/asakusuma/promise-workshop), [série 2](https://repl.it/@AdamCahan/Promise-practice-exercises) et [série 3](https://developers.google.com/web/ilt/pwa/lab-promises)_
 

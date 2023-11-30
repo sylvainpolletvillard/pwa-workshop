@@ -12,106 +12,57 @@ We saw in the previous step two methods of the Service Worker life cycle: `insta
 Service worker APIs rely heavily on promises. Let's take a quick look on how they work.
 
 ::: tip
-You can try the code in this section using node or an online editor such as [https://repl.it](https://repl.it/languages/nodejs)
+You can try the code in your browser JS console or in an online editor like [repl.it](https://repl.it/languages/javascript).
 :::
 
-Promises provide an interface to handle series of asynchronous function calls more conveniently. They improve code readability compared to callbacks passed as arguments, for example. The ES2015 JavaScript specification allows to create promises using this constructor:
+Promises provide an interface to handle series of asynchronous function calls more conveniently. They improve code readability compared to callbacks passed as arguments, for example. A Promise is an object that represents the result of an asynchronous operation. It can be in one of three states:
+
+- pending: the operation is not yet completed
+- fulfilled: the operation is completed successfully
+- rejected: the operation failed
+
+Once we have a `Promise` object, its associated code already started to execute asynchronously. We can use the `then()` and `reject()` functions to execute a function when the promises succeeds or fails (it calls. Most of the Service worker APIs provide asynchronous functions that return a Promise. For example, the `fetch()` function is used to make a network request and returns a promise that resolves with a `Response` object when the request succeeds or rejects with an error when the request fails:
 
 ```javascript
-const promise = new Promise((resolve, reject) => {
-  // async function execution
-  // resolve is called on success
-  // reject is called on failure
-});
-```
-
-Here is a more concrete example of a promise that generates a random number after a 1 second delay. It succeeds when the generated number is even and fails when the generated number is odd.
-
-```javascript
-function generateRandomNumber() {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      const nb = Math.floor(Math.random() * 10); // random number between 0 and 10
-      if (nb % 2 == 0) {
-        resolve(nb);
-      } else {
-        reject({ message: "odd number", number: nb });
-      }
-    }, 1000);
-  });
-}
-```
-
-We will not use this `Promise` constructor however because most of the Service worker APIs provide functions that already return a promise.
-
-Once we have a `Promise` object, its associated code starts to execute asynchronously. We can use the `then()` and `reject()` functions to execute a function when the promises succeeds (it calls `resolve`) or fails (it calls `reject`).
-
-The following example illustrates how to handle the promise returned by the `generateRandomNumber()` function. [Run online](https://repl.it/@yostane/promise01)
-
-```javascript
-const promise = generateRandomNumber(); // create a promise that generated a random number asynchronously
+const promise = fetch("http://server.api/user/yassine");
 promise
-  .then(function(number) {
-    // this function is called when the promise succeds
-    console.log(number);
+  .then(function (userData) {
+    // this function is called when the request is successful
+    console.log(userData);
   })
-  .catch(function(error) {
-    // this function is called when the promise fails
+  .catch(function (error) {
+    // this function is called when the request failed for any reason
     console.error(error);
   });
-console.log("Promise example"); // this message is shows first because the promise is async
+console.log("Promise example"); // this log is shown before the other two because the promise is asynchronous
 ```
 
-We can abbreviate the promise call by extracting the `then` and `catch` handlers as functions. [Run online](https://repl.it/@yostane/promise02)
+The best feature of Promises is that they can be easily chained. Inside a `then` callback, you can pass a function that returns another Promise in order to chain asynchronous operations:
 
 ```javascript
-function handleSuccess(number) {
-  console.log(number);
-}
-function handleFailure(message) {
-  console.error(message);
-}
-generateRandomNumber()
-  .then(handleSuccess)
-  .catch(handleFailure);
-console.log("Promise example"); // this message is shows first because the promise is async
-```
-
-The best feature of Promises is that they can be easily chained. The following example generates a new random number asynchronously only if the first promise succeeded. [Run online](https://repl.it/@yostane/promise03)
-
-```javascript
-function handleSuccess(number) {
-  console.log(number);
-}
-function handleFailure(message) {
-  console.error(message);
-}
-generateRandomNumber()
-  .then(handleSuccess)
-  .then(generateRandomNumber)
-  .then(handleSuccess) // chain a second promise and handle is result
+initDatabase()
+  .then(fetchAllUsers)
+  .then((users) => fetchUser(users[0].id))
+  .then((user) => console.log(user))
   .catch(handleFailure); // if any of the previous calls fails, catch is called
-console.log("Promise example"); // this message is shows first because the promise is async
 ```
 
-Since ES2018 specification, there is a new operator that can be used to deal with promises with a more _synchronous_ style. Instead of chaining `then` calls and callbacks, we can pause the function execution while waiting for a promise result, then store the result in a variable and resume function execution. This is called awaiting the result and uses the `async/await` keywords. With this method, the catch method is replaced by a `try/catch` block, just like you are used to catch synchronous exceptions.
+Since ES2018 specification, there is a new operator that can be used to deal with promises with a more _synchronous_ style. Instead of chaining `then` calls and callbacks, we can pause the function execution while waiting for a promise result, then store the result in a variable and resume function execution. This is called awaiting the result and uses the `async/await` keywords. With this method, the `catch` method is replaced by a `try/catch` block, just like you are used to catch synchronous exceptions.
 
-The following code snippet transforms the last example to use `async/await`. [Run online](https://repl.it/@yostane/promise04)
+The following code snippet transforms the last example to use `async/await`.
 
 ```javascript
 // If we want to use await, we must be place the code in async function
-// More reading https://github.com/tc39/proposal-top-level-await, https://gist.github.com/Rich-Harris/0b6f317657f5167663b493c722647221
 async function mainAsync() {
   try {
-    // create the promise asynchronously without blocking the thread
-    // and wait for its result (the parameter passed to resolve)
-    const nb1 = await generateRandomNumberAsync();
-    console.log(nb1); // nb1 is not the promise but rather its result in case of success
-    const nb2 = await generateRandomNumberAsync();
-    console.log(nb2);
+    // wait for promise result without blocking the thread
+    await initDatabase();
+    const users = await fetchAllUsers();
+    const user = await fetchUser(users[0].id);
+    console.log(user);
   } catch (error) {
     // this catch block is executed if any promise above fails
-    console.error(error); // the error variable is the value passed to reject
+    console.error(error);
   }
 }
 mainAsync(); // call the function that runs async code
@@ -146,10 +97,10 @@ We will cache the essential static files of the application as soon as possible.
 const CACHE_NAME = "V1";
 const STATIC_CACHE_URLS = ["/", "styles.css", "scripts.js"];
 
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   console.log("Service Worker installing.");
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_CACHE_URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_CACHE_URLS))
   );
 });
 ```
@@ -165,7 +116,7 @@ Reload the page and the Service Worker, making sure that the new version of the 
 Now that the files are cached, we have to indicate to use their cached version when the browser requests them. To do this, we will use the `fetch` event. The latter intercepts all requests made by clients who have installed the Service Worker. You can then return a custom response with `event.respondWith`, where `event` is the [FetchEvent](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent). The [`event.respondWith`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith) function takes as a single argument a Promise that must be resolved with the response to return.
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   console.log(`Request of ${event.request.url}`);
 
   // default behaviour: request the network
@@ -183,12 +134,12 @@ We want to change the default behavior and return previously cached versions if 
 <Solution>
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   // Cache-First Strategy
   event.respondWith(
     caches
       .match(event.request) // check if the request has already been cached
-      .then(cached => cached || fetch(event.request)) // otherwise request network
+      .then((cached) => cached || fetch(event.request)) // otherwise request network
   );
 });
 ```
@@ -213,7 +164,7 @@ function cache(request, response) {
 
   return caches
     .open(CACHE_NAME)
-    .then(cache => cache.put(request, response.clone()));
+    .then((cache) => cache.put(request, response.clone()));
 }
 ```
 
@@ -228,14 +179,14 @@ An answer can only be read once, so it must be cloned with the `.clone()` method
 <Solution>
 
 ```js
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   // Cache-First Strategy
   event.respondWith(
     caches
       .match(event.request) // check if the request has already been cached
-      .then(cached => cached || fetch(event.request)) // otherwise request network
+      .then((cached) => cached || fetch(event.request)) // otherwise request network
       .then(
-        response =>
+        (response) =>
           cache(event.request, response) // put response in cache
             .then(() => response) // resolve promise with the network response
       )
@@ -271,15 +222,15 @@ To handle this problem, one solution is to use a new cache with another name. Th
 ```js
 const CACHE_NAME = "V2";
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   // delete any unexpected caches
   event.waitUntil(
     caches
       .keys()
-      .then(keys => keys.filter(key => key !== CACHE_NAME))
-      .then(keys =>
+      .then((keys) => keys.filter((key) => key !== CACHE_NAME))
+      .then((keys) =>
         Promise.all(
-          keys.map(key => {
+          keys.map((key) => {
             console.log(`Deleting cache ${key}`);
             return caches.delete(key);
           })
