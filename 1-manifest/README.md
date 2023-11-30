@@ -36,6 +36,9 @@ The manifest is a JSON file that contains several properties. It is recommended 
 - `lang` - the main language of the application.
 - `related_applications` - an array of native applications that are installable by the underlying platform and are intended to be alternatives to the PWA that provides similar/equivalent functionality. Ignore if there is no native application.
 - `icons` - list of application icons of different resolutions, used for shortcut and splashscreen. The recommended sizes to be supplied are at least 192x192px and 512x512px. The device will automatically pick the best icon depending on the case. It is also interesting to provide a SVG vector version of the icon that will fit a maximum of sizes.
+- `screenshots` - list of screenshots of the application in different form factors, shown in some web application stores or in the install prompt UI for some browsers.
+
+You can find a more complete article on web app manifest and all its properties on [web.dev](https://web.dev/articles/add-manifest)
 
 ## Using a manifest generator
 
@@ -45,12 +48,6 @@ Since the application manifest is a text file, you can choose to write it by han
 - [Web App Manifest Generator](https://tomitm.github.io/appmanifest/).
 
 Using one of these tools, generate a manifest file for the app. Your manifest should at least contain the following properties: `name`,`short_name`, `lang`,`start_url`, `display: 'standalone'`, `theme_color` and `icons` with at least two PNG icons sized 192x192px and 512x512px and one SVG version.
-
-Here are some examples of online tools to make these icons:
-
-- [Method Draw](https://editor.method.ac/)
-- [SVG Editor: Vector Paint](http://vectorpaint.yaks.co.nz/)
-- [Googel drawings](https://docs.google.com/drawings/)
 
 ::: tip
 
@@ -115,4 +112,4 @@ You can check that the manifest is retrieved correctly by looking in the _Applic
 ## PWA compatibility library
 
 Some browsers do not support yet some PWA features. For example, there is not splash-screen support in mobile Safari 12. The library
-[pwacompat](https://github.com/GoogleChromeLabs/pwacompat) by Google Chrome Labs fixes some of these issues. We strongly recommend to add this script for your PWAs for better compatibility.
+[pwacompat](https://github.com/GoogleChromeLabs/pwacompat) by Google Chrome Labs fixes some of these issues.

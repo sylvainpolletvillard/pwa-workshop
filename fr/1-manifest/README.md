@@ -33,21 +33,18 @@ Le manifeste est un fichier JSON contient plusieurs champs. Il est recommandé d
   - `minimal-ui`: l'application va ressembler et se comporter comme une application autonome, mais elle aura quelques élements d'interface permettant de contrôler la navigation. Les éléments varient en fonction du navigateur et du système.
   - `browser` (par défaut): l'application s'ouvre dans un nouvel onglet ou une nouvelle fenêtre du navigateur, en fonction du navigateur et de la plateforme
 - `icons`:  liste d'icônes de l'application de différentes résolutions, utilisées notamment pour le raccourci et le splashscreen. Les tailles à fournir recommandées sont a minima 192x192px et 512x512px. L'appareil choisira la meilleure icône automatiquement selon les cas. Il est également intéressant de fournir en fallback une version vectorielle SVG de l'icône qui s'adaptera à un maximum de tailles.
+- `screenshots`: liste de captures d'écran de l'application dans différents facteurs de forme, affichées dans certains stores d'applications web ou dans l'interface de la fenêtre d'installation pour certains navigateurs.
+
+Vous pouvez trouver un article plus complet sur le manifeste d'application web et toutes ses propriétés sur [web.dev](https://web.dev/articles/add-manifest?hl=fr)
 
 ## Utilisation d'un générateur de manifeste
 
 Comme le manifeste d'application est un fichier texte, on peut opter pour l'écrire à la main ou alors utiliser un outil qui simplifie sa création. Plusieurs outils sont disponibles sur internet:
 
-- [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/): Recommandé car il permet de générer les icones à partir d'un PNG de 512x512 (_attention à bien passer un png_)
+- [https://app-manifest.firebaseapp.com/](https://app-manifest.firebaseapp.com/)
 - [Web App Manifest Generator](https://tomitm.github.io/appmanifest/)
 
 En utilisant un de ces outils, générez un fichier manifeste exhaustif. Votre manifeste devra au moins contenir les propriétés suivantes: `name`, `short_name`, `lang`, `start_url`, `display: "standalone"`, `theme_color` et `icons` avec au moins deux icônes PNG de tailles 192x192 et 512x512 et une au format vectoriel SVG.
-
-Voici quelques outils en ligne qui permettent de créer une icône:
-
-- [Method Draw](https://editor.method.ac/)
-- [SVG Editor: Vector Paint](http://vectorpaint.yaks.co.nz/)
-- [Googel drawings](https://docs.google.com/drawings/)
 
 ::: tip
 
@@ -113,4 +110,4 @@ Vous pouvez vérifier la prise en compte du manifeste en regardant dans l'onglet
 
 ## Bibliothèque de compatibilité PWA
 
-Certains navigateurs anciens ne supportent pas encore certaines fonctionnalités du manifeste d'application. Par exemple, Safari 12 mobile ne prend pas en charge l'écran d’accueil (ou splash-screen). La bibliothèque [pwacompat](https://github.com/GoogleChromeLabs/pwacompat) de Google Chrome Labs permet de résoudre en partie ce problème. Nous vous recommandons vivement d’ajouter ce script à vos PWA pour une meilleure compatibilité.
+Certains navigateurs anciens ne supportent pas encore certaines fonctionnalités du manifeste d'application. Par exemple, Safari 12 mobile ne prend pas en charge l'écran d’accueil (ou splash-screen). La bibliothèque [pwacompat](https://github.com/GoogleChromeLabs/pwacompat) de Google Chrome Labs permet de résoudre en partie ce problème.
