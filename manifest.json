@@ -1,0 +1,23 @@
+{
+	"name": "PWA Workshop Docs",
+	"short_name": "PWA Workshop",
+	"theme_color": "#3eaf7c",
+	"background_color": "#3eaf7c",
+	"display": "standalone",
+	"scope": "/",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "icon-192.png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "icon.png",
+			"sizes": "512x512"
+		},
+		{
+			"src": "icon.svg",
+			"sizes": "513x513"
+		}
+	]
+}
