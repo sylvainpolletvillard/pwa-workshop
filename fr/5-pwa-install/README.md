@@ -18,7 +18,7 @@ Un des avantages des PWA est qu’ils peuvent être installés s’ils respecten
   - `start_url`
   - l'affichage doit être l'un des suivants: `fullscreen`, `standalone` ou `minimal-ui`
 - Servi sur HTTPS (obligatoire pour les agents de service)
-- A inscrit un technicien de service avec un gestionnaire d'événements fetch
+- A inscrit un Service Worker avec un gestionnaire d'événements fetch
 
 ## Installation de la PWA
 
@@ -65,7 +65,7 @@ Ajoutons notre propre **bouton d'installation** à notre PWA en procédant comme
 let deferredPrompt; // Allows to show the install prompt
 const installButton = document.getElementById("install_button");
 
-window.addEventListener("beforeinstallprompt", e => {
+window.addEventListener("beforeinstallprompt", (e) => {
   console.log("beforeinstallprompt fired");
   // Prevent Chrome 76 and earlier from automatically showing a prompt
   e.preventDefault();
@@ -86,7 +86,7 @@ function installApp() {
   installButton.disabled = true;
 
   // Wait for the user to respond to the prompt
-  deferredPrompt.userChoice.then(choiceResult => {
+  deferredPrompt.userChoice.then((choiceResult) => {
     if (choiceResult.outcome === "accepted") {
       console.log("PWA setup accepted");
       installButton.hidden = true;
@@ -102,7 +102,7 @@ function installApp() {
 5. Optionnellement, on peut être avertis de la fin de l'installation.
 
 ```js
-window.addEventListener("appinstalled", evt => {
+window.addEventListener("appinstalled", (evt) => {
   console.log("appinstalled fired", evt);
 });
 ```
