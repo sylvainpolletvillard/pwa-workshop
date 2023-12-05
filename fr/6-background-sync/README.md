@@ -8,7 +8,7 @@ lang: fr
 Dans cette section, nous allons mettre à profit le Service Worker et une nouvelle API, **Background Sync**, pour mettre à jour la liste des participants en tâche de fond et notifier l'utilisateur lorsqu'il y a des nouveaux participants.
 
 ::: danger Non standard
-L'API Background Sync n'est pas encore standardisée. La [spécification](https://wicg.github.io/BackgroundSync/spec/) est toujours à l'étude. Elle est déjà implémentée sur Chrome et Android depuis 2016, et en cours de développement sur Edge et Firefox. Cette API distingue deux types de synchronisation: _One-Time_ et _Périodique_. Actuellement, seule la synchronisation **One-Time** est implémentée dans Chrome, et il peut y avoir quelques bugs d'implémentation.
+L'API Background Sync n'est pas encore standardisée. La [spécification](https://wicg.github.io/BackgroundSync/spec/) est toujours à l'étude. Elle est déjà implémentée sur Chrome, Edge et Android depuis 2016. Cette API distingue deux types de synchronisation: _One-Time_ et _Périodique_.
 :::
 
 Concernant les notifications, L'API Push permet aux applications web de recevoir des notifications push poussées depuis un serveur, même lorsque l'application web n'est pas au premier plan et même lorsqu'elle n'est actuellement pas chargée sur l'agent utilisateur. Néanmoins, cela implique l’utilisation côté serveur d’un service de push tel que Google Cloud Messenger.
@@ -29,7 +29,7 @@ Puis déclarez la fonction suivante dans `scripts.js`
 
 ```js
 function registerNotification() {
-  Notification.requestPermission(permission => {
+  Notification.requestPermission((permission) => {
     if (permission === "granted") {
       registerBackgroundSync();
     } else console.error("Permission was not granted.");
@@ -52,16 +52,16 @@ function registerBackgroundSync() {
   }
 
   navigator.serviceWorker.ready
-    .then(registration => registration.sync.register("syncAttendees"))
+    .then((registration) => registration.sync.register("syncAttendees"))
     .then(() => console.log("Registered background sync"))
-    .catch(err => console.error("Error registering background sync", err));
+    .catch((err) => console.error("Error registering background sync", err));
 }
 ```
 
 Côté Service Worker, un évènement de type `sync` sera émis lorsque le système décide de déclencher une synchronisation. Cette décision se base sur différents paramètres: la connectivité, l'état de la batterie, la source d'alimentation etc. ; ainsi nous ne pouvons pas être sûrs du moment où la synchronisation est déclenchée. La spécification prévoit des possibilités de paramétrage à terme, mais pour le moment, tout ce que nous pouvons faire est attendre. Toutefois, dans les conditions du workshop, cela ne devrait prendre que quelques secondes.
 
 ```js
-self.addEventListener("sync", function(event) {
+self.addEventListener("sync", function (event) {
   console.log("sync event", event);
   if (event.tag === "syncAttendees") {
     event.waitUntil(syncAttendees()); // on lance la requête de synchronisation
@@ -77,7 +77,7 @@ La requête de synchronisation est similaire à l'`update` et `refresh` de l'ét
 function syncAttendees() {
   return update({ url: `https://reqres.in/api/users` })
     .then(refresh)
-    .then(attendees =>
+    .then((attendees) =>
       self.registration.showNotification(
         `${attendees.length} attendees to the PWA Workshop`
       )

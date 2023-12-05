@@ -8,13 +8,12 @@ lang: en
 In this step, we will use the Service Worker and a new API, **Background Sync**, to update the list of attendees in the background and notify the user when there are new attendees.
 
 ::: danger Non-standard
-The Background Sync API is not yet standardized. The [specification](https://wicg.github.io/BackgroundSync/spec/) is still under study. It has already been implemented on Chrome and Android since 2016, and is under development on Edge and Firefox. This API distinguishes two types of synchronization: * One-Time * and * Periodic *. Currently, only **One-Time** synchronization is implemented in Chrome, and there may be some implementation bugs.
+The Background Sync API is not yet standardized. The [specification](https://wicg.github.io/BackgroundSync/spec/) is still under study. It has already been implemented on Chrome, Edge and Android since 2016. This API distinguishes two types of synchronization: _ One-Time _ and _ Periodic _.
 :::
 
 Regarding notifications, the Push API allows web applications to receive push notifications pushed from a server, even when the web application is not in the foreground and even when it is not currently loaded on the user system. Nevertheless, this implies the use of a server-side push service such as Google Cloud Messenger.
- 
-During this workshop, we will not use the Push API but the **Notification API**. This API also allows you to send notifications without requiring a server part, but requires the browser to be open. These notifications are multi-platform, so they will adapt to the target platform: Android notifications or the notification center of Windows 10 for example.
 
+During this workshop, we will not use the Push API but the **Notification API**. This API also allows you to send notifications without requiring a server part, but requires the browser to be open. These notifications are multi-platform, so they will adapt to the target platform: Android notifications or the notification center of Windows 10 for example.
 
 ## Notifications and permissions
 
@@ -30,10 +29,11 @@ Then declare the following function in `scripts.js`
 
 ```js
 function registerNotification() {
-	Notification.requestPermission(permission => {
-		if (permission === 'granted'){ registerBackgroundSync() }
-		else console.error("Permission was not granted.")
-	})
+  Notification.requestPermission((permission) => {
+    if (permission === "granted") {
+      registerBackgroundSync();
+    } else console.error("Permission was not granted.");
+  });
 }
 ```
 
@@ -47,25 +47,25 @@ Once the `registration` object of type `ServiceWorkerRegistration` is retrieved,
 
 ```js
 function registerBackgroundSync() {
-    if (!navigator.serviceWorker){
-        return console.error("Service Worker not supported")
-    }
+  if (!navigator.serviceWorker) {
+    return console.error("Service Worker not supported");
+  }
 
-    navigator.serviceWorker.ready
-    .then(registration => registration.sync.register('syncAttendees'))
+  navigator.serviceWorker.ready
+    .then((registration) => registration.sync.register("syncAttendees"))
     .then(() => console.log("Registered background sync"))
-    .catch(err => console.error("Error registering background sync", err))
+    .catch((err) => console.error("Error registering background sync", err));
 }
 ```
 
 On the Service Worker side, a `sync` event will be emitted when the system decides to trigger a synchronization. This decision is based on various parameters: connectivity, battery status, power source, etc. ; so we can not be sure when synchronization will be triggered. The specification is planning for future parameterization options, but for now, all we can do is wait. However, under the conditions of this workshop, this should only take a few seconds.
 
 ```js
-self.addEventListener('sync', function(event) {
-	console.log("sync event", event);
-    if (event.tag === 'syncAttendees') {
-        event.waitUntil(syncAttendees()); // sending sync request
-    }
+self.addEventListener("sync", function (event) {
+  console.log("sync event", event);
+  if (event.tag === "syncAttendees") {
+    event.waitUntil(syncAttendees()); // sending sync request
+  }
 });
 ```
 
@@ -74,12 +74,14 @@ self.addEventListener('sync', function(event) {
 The synchronization request is similar to the `update` and` refresh` at step 4, except that it is requested by the system and not the client:
 
 ```js
-function syncAttendees(){
-	return update({ url: `https://reqres.in/api/users` })
-    	.then(refresh)
-    	.then((attendees) => self.registration.showNotification(
-    		`${attendees.length} attendees to the PWA Workshop`
-    	))
+function syncAttendees() {
+  return update({ url: `https://reqres.in/api/users` })
+    .then(refresh)
+    .then((attendees) =>
+      self.registration.showNotification(
+        `${attendees.length} attendees to the PWA Workshop`
+      )
+    );
 }
 ```
 
